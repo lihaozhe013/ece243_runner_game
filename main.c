@@ -5,17 +5,32 @@
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
 int pixel_buffer_start;
+bool reset = false;
+bool in_start_page = false;
+bool start = false;
 
-
-
+// Functions Declear
 void plot_pixel(int x, int y, short int line_color);
 void swap(int *a, int *b);
+void showStartPage();
+void showGameOver();
+void startGame();
+
+// Main Function
 int main(void) {
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
+    
+    while (1) {
+        if (in_start_page && start) {
+            startGame();
+        }
+    }
     return 0;
 }
 
 
+
+// Functions
 void plot_pixel(int x, int y, short int line_color)
 {
     volatile short int *one_pixel_address;
@@ -61,3 +76,23 @@ void swap(int *a, int *b) {
     *a = *b;
     *b = temp;
 }
+
+void showStartPage() {
+
+}
+
+void startGame() {
+    while (1) {
+        // if reset is pressed, reset the game to start screen
+        if (reset) {
+            reset = false;
+            in_start_page = true;
+        }
+        // game over condition
+        if (1) {
+            showGameOver();
+        }
+        // 
+    }
+}
+
