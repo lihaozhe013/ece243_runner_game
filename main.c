@@ -2,6 +2,7 @@
 #include <stdbool.h>
 
 // Global Variables
+#define player_pos_x 80
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
 int pixel_buffer_start;
@@ -15,6 +16,7 @@ void swap(int *a, int *b);
 void showStartPage();
 void showGameOver();
 void startGame();
+void resetObstacle(int pos[2], int type, int radius);
 
 // Main Function
 int main(void) {
@@ -82,6 +84,18 @@ void showStartPage() {
 }
 
 void startGame() {
+    bool game_over = false;
+
+    // in game variables
+    int player_pos_y = SCREEN_WIDTH / 2;
+    int obstacles_pos[10][2], obstacles_type[10], obstacles_radius[10];
+
+    // init obstacles
+    for (int i = 0; i < 10; ++i) {
+        resetObstacle(obstacles_pos[i], obstacles_type[i], obstacles_radius[i]);
+    }
+
+
     while (1) {
         // if reset is pressed, reset the game to start screen
         if (reset) {
@@ -89,10 +103,34 @@ void startGame() {
             in_start_page = true;
         }
         // game over condition
-        if (1) {
+        if (game_over) {
             showGameOver();
+            break;
         }
-        // 
+        
+        /* Game Logic Begin */
+        // check if player collide with obstacle
+        if (1) {
+            game_over = true;
+            continue;
+        }
+
+        // update obstacles status
+        for (int i = 0; i < 10; ++i) {
+            if (1/*obstacle completely outside screen*/) {
+                resetObstacle(obstacles_pos[i], obstacles_type[i], obstacles_radius[i]);
+            }
+            else { // else update obstacle position
+                obstacles_pos[i][1] -= 1;
+            }
+        }
+        /* Game Logic End */
     }
 }
 
+void resetObstacle(int pos[2], int type, int radius) {
+    pos[0] = rand() % SCREEN_HEIGHT;
+    pos[1] = rand() % SCREEN_WIDTH;
+    type = rand() % 5; // 5 types of obstacles
+    radius = rand() % 30;
+}
