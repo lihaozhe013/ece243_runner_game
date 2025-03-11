@@ -1,9 +1,9 @@
-// clang test_terminal_game.c -lncurses
+// gcc test_terminal_game.c -lncurses
 #include <ncurses.h>
 
 // Define colors
 #define PLAYER_COLOR 1
-#define BG_COLOR 2
+#define BG_COLOR 3
 
 // Define player starting position
 int player_x = 10, player_y = 5;
@@ -65,8 +65,8 @@ int main() {
     curs_set(0);          // Hide cursor
 
     // Define color pairs
-    init_pair(PLAYER_COLOR, COLOR_RED, COLOR_BLACK);
-    init_pair(BG_COLOR, COLOR_BLUE, COLOR_BLUE);
+    init_pair(PLAYER_COLOR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(BG_COLOR, COLOR_WHITE, COLOR_WHITE);
 
     game_loop(); // Start the game loop
 
