@@ -11,6 +11,7 @@ int pixel_buffer_start;
 bool reset = false;
 bool in_start_page = false;
 bool start = false;
+char draw_screen[SCREEN_WIDTH][SCREEN_HEIGHT] = {' '};
 
 // Functions Declear
 void plot_pixel(int x, int y, short int line_color);
@@ -27,6 +28,8 @@ int main(void) {
     
     while (1) {
         if (in_start_page && start) {
+            in_start_page = false;
+            start = false;
             startGame();
         }
     }
@@ -83,7 +86,7 @@ void swap(int *a, int *b) {
 }
 
 void showStartPage() {
-
+    
 }
 
 void startGame() {
@@ -142,5 +145,8 @@ void resetObstacle(int pos[2], int type, int radius) {
 }
 
 bool collideObstacle(int pos[2], int type, int radius) {
-    
+    switch (type) {
+        case 0:
+            if (pos[0] - radius <= )
+    }
 }

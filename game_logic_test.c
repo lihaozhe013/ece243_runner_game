@@ -15,6 +15,7 @@ int pixel_buffer_start;
 bool reset = false;
 bool in_start_page = false;
 bool start = false;
+char draw_screen[SCREEN_WIDTH][SCREEN_HEIGHT] = {' '};
 
 void setup_terminal() {
     struct termios t;
@@ -48,16 +49,15 @@ int kbhit() {
 }
 
 void draw() {
-    system("clear"); // 清屏
+    system("clear");
     for (int i = 0; i <= SCREEN_HEIGHT; i++) {
         for (int j = 0; j <= SCREEN_WIDTH; j++) {
-            if (i == 0 || i == SCREEN_HEIGHT || j == 0 || j == SCREEN_WIDTH) {
-                printf("#"); // 边界
-            } else if (i == 1 && j == 1) {
-                printf("*"); // 食物
-            } else {
-            }
+            printf("%c", draw_screen[i][j]);
         }
         printf("\n");
     }
+}
+
+int main(void) {
+    return 0;
 }
