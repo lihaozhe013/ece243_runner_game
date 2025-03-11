@@ -11,7 +11,7 @@ int pixel_buffer_start;
 bool reset = false;
 bool in_start_page = false;
 bool start = false;
-char draw_screen[SCREEN_WIDTH][SCREEN_HEIGHT] = {' '};
+int draw_screen[SCREEN_WIDTH][SCREEN_HEIGHT] = {0};
 
 // Functions Declear
 void plot_pixel(int x, int y, short int line_color);
@@ -19,8 +19,8 @@ void swap(int *a, int *b);
 void showStartPage();
 void showGameOver();
 void startGame();
-void resetObstacle(int pos[2], int type, int radius);
-bool collideObstacle(int pos[2], int type, int radius);
+void resetObstacle(int pos[2], int height, int width);
+bool collideObstacle(int pos[2], int height, int width);
 
 // Main Function
 int main(void) {
@@ -94,11 +94,11 @@ void startGame() {
 
     // in game variables
     int player_pos_x = SCREEN_WIDTH / 2;
-    int obstacles_pos[10][2], obstacles_type[10], obstacles_radius[10];
+    int obstacles_pos[10][2], obstacle_height[10], obstacle_width[10];
 
     // init obstacles
     for (int i = 0; i < 10; ++i) {
-        resetObstacle(obstacles_pos[i], obstacles_type[i], obstacles_radius[i]);
+        resetObstacle(obstacles_pos[i], obstacle_height[i], obstacle_width[i]);
     }
 
 
@@ -117,36 +117,42 @@ void startGame() {
         /* Game Logic Begin */
         // check if player collide with obstacle
         for (int i = 0; i < 10; ++i) {
-            if (collideObstacle(obstacles_pos[i], obstacles_type[i], obstacles_radius[i])) {
+            if (collideObstacle(obstacles_pos[i], obstacle_height[i], obstacle_width[i])) {
                 game_over = true;
                 break;
             }
         }
 
-        // update obstacles status
+        // update obstacles position
         for (int i = 0; i < 10; ++i) {
             if (1/*obstacle completely outside screen*/) {
-                resetObstacle(obstacles_pos[i], obstacles_type[i], obstacles_radius[i]);
+                resetObstacle(obstacles_pos[i], obstacle_height[i], obstacle_width[i]);
             }
             else { // else update obstacle position
-                obstacles_pos[i][1] -= 1;
+                obstacles_pos[i][1] += 1;
+                
             }
         }
+        // move player if key is pressed
+
+        // clean screen
+        
+        // draw obstacle
+
+        // draw player
+
         /* Game Logic End */
     }
     showGameOver();
 }
 
-void resetObstacle(int pos[2], int type, int radius) {
+void resetObstacle(int pos[2], int height, int width) {
     pos[0] = rand() % SCREEN_HEIGHT;
     pos[1] = rand() % SCREEN_WIDTH;
-    type = rand() % 5; // 5 types of obstacles
-    radius = rand() % 30;
+    height = rand() % 30; // 5 heights of obstacles
+    width = rand() % 30;
 }
 
-bool collideObstacle(int pos[2], int type, int radius) {
-    switch (type) {
-        case 0:
-            if (pos[0] - radius <= )
-    }
+bool collideObstacle(int pos[2], int height, int width) {
+    // if (player_pos_y + PLAYER_Y_OFFSET)
 }
