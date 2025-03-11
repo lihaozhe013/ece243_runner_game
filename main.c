@@ -21,6 +21,8 @@ void showGameOver();
 void startGame();
 void resetObstacle(int pos[2], int height, int width);
 bool collideObstacle(int pos[2], int height, int width);
+void waitForVSync();
+void clearScreen();
 
 // Main Function
 int main(void) {
@@ -155,4 +157,18 @@ void resetObstacle(int pos[2], int height, int width) {
 
 bool collideObstacle(int pos[2], int height, int width) {
     // if (player_pos_y + PLAYER_Y_OFFSET)
+}
+
+void waitForVSync() {
+    volatile int *pixelCtrlPtr = (int *)0xFF203020;
+    *pixelCtrlPtr = 1;
+    while (*(pixelCtrlPtr + 3) & 0b1);
+}
+
+void clearScreen() {
+    for (int i = 0; i < SCREEN_WIDTH; i++) {
+        for (int j = 0; j < SCREEN_HEIGHT; j++) {
+            plot_pixel(i, j, 0);
+        }
+    }
 }
