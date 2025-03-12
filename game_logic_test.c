@@ -53,7 +53,8 @@ int main() {
 
 void startGame() {
     bool game_over = false;
-
+    int current_speed = 1;
+    int time_counter = 0;
     // in game variables
     int obstacles_pos[10][2], obstacle_height[10], obstacle_width[10];
 
@@ -67,7 +68,8 @@ void startGame() {
 
     while (!game_over) {
         clear();
-
+        if (time_counter % 200 == 0)
+            ++current_speed, time_counter = 0;
         // Check for collision
         for (int i = 0; i < 10; ++i) {
             if (collideObstacle(obstacles_pos[i], obstacle_height[i], obstacle_width[i])) {
@@ -81,7 +83,7 @@ void startGame() {
             if (obstacles_pos[i][1] < 0) {
                 resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i]);
             } else {
-                obstacles_pos[i][1] -= 1;
+                obstacles_pos[i][1] -= current_speed;
             }
         }
 
@@ -117,6 +119,7 @@ void startGame() {
         // Refresh screen to show updates
         refresh();
         napms(50); // Slow down loop
+        ++time_counter;
     }
 
     // Display Game Over message
