@@ -43,20 +43,24 @@ int main(void)
     clear_screen(); // pixel_buffer_start points to the pixel buffer
     old_player_pos_x = player_pos_x;
     draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
-    while (1)
-    {
-		// clear_screen();
-        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0);
-        wait_for_vsync();
-        // code for drawing the boxes and lines (not shown)
-        // draw boxes
+    for (;;) {
+        // Clear the previous rectangle (on the back buffer)
+        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + 1, PLAYER_Y_OFFSET, 0);
+        
+        // Draw the new rectangle (on the same back buffer)
         draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
+        
+        // Wait for vertical sync to swap buffers
+        wait_for_vsync();
+        
+        // Update the pixel_buffer_start pointer to the new back buffer
+        pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+        
+        // Update the previous position and move the player to the right
         old_player_pos_x = player_pos_x;
-
         player_pos_x += 1;
-        wait_for_vsync(); // swap front and back buffers on VGA vertical sync
-        pixel_buffer_start = *(pixel_ctrl_ptr + 1); // new back buffer
     }
+
 }
 
 void plot_pixel(int x, int y, short int line_color)
