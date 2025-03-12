@@ -25,6 +25,7 @@ int main(void)
     srand(time(NULL));
     
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
+    volatile int * keyboard_ptr = (int * )0xFF200100;
     // declare other variables(not shown)
     // initialize location and direction of rectangles(not shown)
 
@@ -89,6 +90,30 @@ void clear_screen() {
     for (int i = 0; i < SCREEN_WIDTH; ++i) {
         for (int j = 0; j < SCREEN_HEIGHT; ++j) {
             plot_pixel(i, j, 0);
+        }
+    }
+}
+
+void get_keyboard_input() {
+    int input[3]; = {0};
+    int inputIndex = 2;
+    
+    if (*(keyboard_ptr) & 0xF) {
+        while (*(keyboard_ptr) & 0xF) {
+            input[inputIndex] = *(keyboard_ptr) & 0x7; // save the input
+            inputIndex--;
+            if (inputIndex == -1) { // reset index
+                inputIndex = 2;
+            }
+            if (input[0] == 0xE0 && input[1] == 0xF0 && input[2] == 0x6B) { // left arrow key release
+                break;
+            } else if (input[0] == 0xE0 && input[1] == 0xF0 && input[2] == 0x74) { // right arrow key release
+                break;
+            } else if (input[0] == 0xE0 && input[1] == 0xF0 && input[2] == 0x75) { // up arrow key release
+                break;
+            } else if (input[0] == 0xE0 && input[1] == 0xF0 && input[2] == 0x72) { // down arrow key release
+                break;
+            }
         }
     }
 }
