@@ -1,11 +1,12 @@
-// gcc game_logic_test.c -lncurses
+// clang game_logic_test.c -lncurses
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ncurses.h>
 
 // Define colors
 #define PLAYER_COLOR 1
-#define BG_COLOR 3
+#define BG_COLOR 2
+#define BLOCK_COLOR 3
 
 // Global Variables
 #define player_pos_y 40
@@ -24,12 +25,11 @@ int player_x = 10, player_y = 5;
 int start_x = 10, start_y = 5;
 
 void startGame();
+void resetObstacle(int pos[2], int height, int width);
+bool collideObstacle(int pos[2], int height, int width);
 void draw_block(int y, int x, chtype ch, int color_pair);
-void draw_block(int y, int x, chtype ch, int color_pair) {
-    attron(COLOR_PAIR(color_pair));
-    mvaddch(y, x, ch);
-    attroff(COLOR_PAIR(color_pair));
-}
+
+
 int main() {
     initscr();            // Initialize ncurses mode
     start_color();        // Enable color support
@@ -38,10 +38,11 @@ int main() {
     curs_set(0);          // Hide cursor
 
     // Define color pairs
-    init_pair(PLAYER_COLOR, COLOR_WHITE, COLOR_BLACK);
+    init_pair(PLAYER_COLOR, COLOR_RED, COLOR_RED);
     init_pair(BG_COLOR, COLOR_WHITE, COLOR_WHITE);
+    init_pair(BLOCK_COLOR, COLOR_BLUE, COLOR_BLUE);
 
-    game_loop(); // Start the game loop
+    startGame();
 
     endwin(); // Restore normal terminal mode
     return 0;
@@ -67,10 +68,10 @@ void startGame() {
             in_start_page = true;
         }
         // game over condition
-        if (game_over) {
-            showGameOver();
-            break;
-        }
+        // if (game_over) {
+        //     showGameOver();
+        //     break;
+        // }
         
         /* Game Logic Begin */
         // check if player collide with obstacle
@@ -87,24 +88,67 @@ void startGame() {
                 resetObstacle(obstacles_pos[i], obstacle_height[i], obstacle_width[i]);
             }
             else { // else update obstacle position
-                obstacles_pos[i][1] += 1;
-                
+                obstacles_pos[i][1] -= 1;
             }
         }
         // move player if key is pressed
-
+        int ch;
+        ch = getch();
+        switch (ch) {
+            case KEY_LEFT:
+                if (player_x > 0) player_pos_x -= 10;
+                break;
+            case KEY_RIGHT:
+                if (player_x < SCREEN_WIDTH - 1) player_pos_x += 10;
+                break;
+            case 10:  // Enter key (Reset position)
+                player_pos_x = SCREEN_WIDTH / 2;
+                break;
+            case 'q': // Quit game
+                return;
+        }
         // clean screen
-        
+        for (int i = 0; i < SCREEN_WIDTH; i++) {
+            for (int j = 0; j < SCREEN_HEIGHT; j++) {
+                draw_block(i, j, ' ', BG_COLOR);
+            }
+        }
         // draw obstacle
-
+        for (int i = 0; i < 10; ++i) {
+            for (int j = obstacles_pos[i][0] - obstacle_width[i]; j < obstacles_pos[i][0] + obstacle_width[i]; ++j) {
+                for (int k = obstacles_pos[i][1] - obstacle_height[i]; k < obstacles_pos[i][1] + obstacle_height[i]; ++k) {
+                    draw_block(k, j, 219, BLOCK_COLOR);
+                }
+            }
+        }
         // draw player
-
+        for (int i = player_pos_x - PLYAER_X_OFFSET; i < player_pos_x + PLYAER_X_OFFSET; ++i) {
+            for (int j = player_pos_y - PLAYER_Y_OFFSET; i < PLAYER_Y_OFFSET; ++j) {
+                draw_block(j, i, 219, PLAYER_COLOR);
+            }
+        }
         /* Game Logic End */
     }
-    showGameOver();
+    // showGameOver();
 }
 
+void resetObstacle(int pos[2], int height, int width) {
+    pos[0] = rand() % SCREEN_HEIGHT;
+    pos[1] = rand() % SCREEN_WIDTH;
+    height = rand() % 30; // 5 heights of obstacles
+    width = rand() % 30;
+}
 
+bool collideObstacle(int pos[2], int height, int width) {
+    // if (player_pos_y + PLAYER_Y_OFFSET)
+    return false;
+}
+
+void draw_block(int y, int x, chtype ch, int color_pair) {
+    attron(COLOR_PAIR(color_pair));
+    mvaddch(y, x, ch);
+    attroff(COLOR_PAIR(color_pair));
+}
 
 /*
 void game_loop() {
