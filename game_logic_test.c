@@ -10,11 +10,11 @@
 #define BLOCK_COLOR 3
 
 // Global Variables
-#define player_pos_y 40
+#define player_pos_y 20
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
-#define PLYAER_X_OFFSET 4
-#define PLAYER_Y_OFFSET 7
+#define PLYAER_X_OFFSET 3
+#define PLAYER_Y_OFFSET 5
 int pixel_buffer_start;
 bool reset = false;
 bool in_start_page = false;
@@ -27,7 +27,7 @@ int start_x = 10, start_y = 5;
 int player_pos_x = SCREEN_WIDTH / 2;
 
 void startGame();
-void resetObstacle(int pos[2], int *height, int *width);
+void resetObstacle(int pos[2], int *height, int *width, int idx);
 bool collideObstacle(int pos[2], int height, int width);
 void draw_block(int y, int x, chtype ch, int color_pair);
 
@@ -60,7 +60,8 @@ void startGame() {
 
     // init obstacles
     for (int i = 0; i < 10; ++i) {
-        resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i]);
+        resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
+        obstacles_pos[i][1] -= 150;
     }
 
     // Make getch() non-blocking
@@ -81,7 +82,7 @@ void startGame() {
         // Update obstacles position
         for (int i = 0; i < 10; ++i) {
             if (obstacles_pos[i][1] < 0) {
-                resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i]);
+                resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
             } else {
                 obstacles_pos[i][1] -= current_speed;
             }
@@ -91,10 +92,10 @@ void startGame() {
         int ch = getch();
         switch (ch) {
             case KEY_LEFT:
-                if (player_pos_x > 0) player_pos_x -= 10;
+                if (player_pos_x > 0) player_pos_x -= 20;
                 break;
             case KEY_RIGHT:
-                if (player_pos_x < SCREEN_WIDTH - 1) player_pos_x += 10;
+                if (player_pos_x < SCREEN_WIDTH - 1) player_pos_x += 20;
                 break;
             case 'q': // Quit game
                 return;
@@ -128,11 +129,16 @@ void startGame() {
     napms(2000); // Pause before exiting
 }
 
-void resetObstacle(int pos[2], int *height, int *width) {
-    pos[0] = rand() % SCREEN_WIDTH;
-    pos[1] = rand() % SCREEN_HEIGHT;
-    *height = rand() % 30 + 1; // Make sure it's not zero
-    *width = rand() % 30 + 1;
+void resetObstacle(int pos[2], int *height, int *width, int idx) {
+    *height = rand() % 45 + 1; // Make sure it's not zero
+    *width = 70 + rand() % 11;
+    if (idx >= 4 && idx <= 9) {
+        pos[0] = rand() % SCREEN_WIDTH;
+    }
+    else {
+        pos[0] = *width / 2 + idx * 80; // 320 / 4 = 80
+    }
+    pos[1] = 240 + rand() % 280;
 }
 
 
