@@ -13,8 +13,8 @@
 #define player_pos_y 40
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
-#define PLYAER_X_OFFSET 10 
-#define PLAYER_Y_OFFSET 30
+#define PLYAER_X_OFFSET 4
+#define PLAYER_Y_OFFSET 7
 int pixel_buffer_start;
 bool reset = false;
 bool in_start_page = false;
