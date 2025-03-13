@@ -59,7 +59,7 @@ void startGame() {
     int obstacles_pos[10][2], obstacle_height[10], obstacle_width[10];
 
     // init obstacles
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 4; ++i) {
         resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
         obstacles_pos[i][1] -= 150;
     }
@@ -72,7 +72,7 @@ void startGame() {
         if (time_counter % 200 == 0)
             ++current_speed, time_counter = 0;
         // Check for collision
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 4; ++i) {
             if (collideObstacle(obstacles_pos[i], obstacle_height[i], obstacle_width[i])) {
                 game_over = true;
                 break;
@@ -80,8 +80,9 @@ void startGame() {
         }
 
         // Update obstacles position
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 4; ++i) {
             if (obstacles_pos[i][1] < 0) {
+                resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
                 resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
             } else {
                 obstacles_pos[i][1] -= current_speed;
@@ -93,8 +94,10 @@ void startGame() {
         switch (ch) {
             case KEY_LEFT:
                 if (player_pos_x > 0) player_pos_x -= 20;
+                if (player_pos_x > 0) player_pos_x -= 20;
                 break;
             case KEY_RIGHT:
+                if (player_pos_x < SCREEN_WIDTH - 1) player_pos_x += 20;
                 if (player_pos_x < SCREEN_WIDTH - 1) player_pos_x += 20;
                 break;
             case 'q': // Quit game
@@ -102,7 +105,7 @@ void startGame() {
         }
 
         // Draw obstacles
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 4; ++i) {
             for (int j = obstacles_pos[i][0]; j < obstacles_pos[i][0] + obstacle_width[i]; ++j) {
                 for (int k = obstacles_pos[i][1]; k < obstacles_pos[i][1] + obstacle_height[i]; ++k) {
                     draw_block(k, j, ' ', BLOCK_COLOR);
@@ -130,15 +133,10 @@ void startGame() {
 }
 
 void resetObstacle(int pos[2], int *height, int *width, int idx) {
-    *height = rand() % 45 + 1; // Make sure it's not zero
+    *height = rand() % 45 + 10; // Make sure it's not zero
     *width = 70 + rand() % 11;
-    if (idx >= 4 && idx <= 9) {
-        pos[0] = rand() % SCREEN_WIDTH;
-    }
-    else {
-        pos[0] = *width / 2 + idx * 80; // 320 / 4 = 80
-    }
-    pos[1] = 240 + rand() % 280;
+    pos[0] = *width / 2 + (idx * 80); // 320 / 4 = 80
+    pos[1] = 240 + (int)(rand() % 80 * idx);
 }
 
 
