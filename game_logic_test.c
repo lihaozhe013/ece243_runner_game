@@ -134,9 +134,9 @@ void startGame() {
 
 void resetObstacle(int pos[2], int *height, int *width, int idx) {
     *height = rand() % 45 + 10; // Make sure it's not zero
-    *width = 70 + rand() % 11;
+    *width = 60 + rand() % 21;
     pos[0] = *width / 2 + (idx * 80); // 320 / 4 = 80
-    pos[1] = 240 + (int)(rand() % 80 * idx);
+    pos[1] = 200 + (int)((40 + rand() % 41) * idx);
 }
 
 
