@@ -62,9 +62,18 @@ int main(void)
             while (1) {
                 get_button_input();
                 if (arrow_input == 1) {
-                    clear_screen();
+                    /* set front pixel buffer to Buffer 1 */
+                    *(pixel_ctrl_ptr + 1) = (int) &Buffer1; // first store the address in the  back buffer
+                    /* now, swap the front/back buffers, to set the front buffer location */
                     wait_for_vsync();
-                    clear_screen();
+                    /* initialize a pointer to the pixel buffer, used by drawing functions */
+                    pixel_buffer_start = *pixel_ctrl_ptr;
+                    clear_screen(); // pixel_buffer_start points to the pixel buffer
+
+                    /* set back pixel buffer to Buffer 2 */
+                    *(pixel_ctrl_ptr + 1) = (int) &Buffer2;
+                    pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
+                    clear_screen(); // pixel_buffer_start points to the pixel buffer
                     break;
                 }
             }
@@ -255,10 +264,10 @@ bool game() {
 }
 
 bool collideObstacle(int pos[2], int height, int width) {
-    return !(player_pos_x + PLYAER_X_OFFSET < pos[0] || 
-             player_pos_x - PLYAER_X_OFFSET > pos[0] + width ||
-             player_pos_y + PLAYER_Y_OFFSET < pos[1] ||
-             player_pos_y - PLAYER_Y_OFFSET > pos[1] + height);
+    return !(player_pos_x + PLYAER_X_OFFSET < pos[0] - width / 2|| 
+             player_pos_x - PLYAER_X_OFFSET > pos[0] + width / 2 ||
+             player_pos_y + PLAYER_Y_OFFSET < pos[1] - height / 2||
+             player_pos_y - PLAYER_Y_OFFSET > pos[1] + height / 2);
 }
 
 void showGameOver() {

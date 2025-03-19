@@ -30,7 +30,9 @@ void resetObstacle(int pos[2], int *height, int *width, int idx);
 void resetObstacle2(int pos[2], int *height, int *width, int idx);
 void get_button_input();
 void get_keyboard_input();
-void game();
+bool game(); // if return true, means game over, if return false, it means game ended accidentally
+bool collideObstacle(int pos[2], int height, int width);
+void showGameOver();
 
 int main(void)
 {
@@ -54,7 +56,29 @@ int main(void)
     clear_screen(); // pixel_buffer_start points to the pixel buffer
 
     // game start
-    game();
+    while (1) {
+        if (game()) {
+            showGameOver();
+            while (1) {
+                get_button_input();
+                if (arrow_input == 1) {
+                    /* set front pixel buffer to Buffer 1 */
+                    *(pixel_ctrl_ptr + 1) = (int) &Buffer1; // first store the address in the  back buffer
+                    /* now, swap the front/back buffers, to set the front buffer location */
+                    wait_for_vsync();
+                    /* initialize a pointer to the pixel buffer, used by drawing functions */
+                    pixel_buffer_start = *pixel_ctrl_ptr;
+                    clear_screen(); // pixel_buffer_start points to the pixel buffer
+
+                    /* set back pixel buffer to Buffer 2 */
+                    *(pixel_ctrl_ptr + 1) = (int) &Buffer2;
+                    pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
+                    clear_screen(); // pixel_buffer_start points to the pixel buffer
+                    break;
+                }
+            }
+        }
+    }
 }
 
 void plot_pixel(int x, int y, short int line_color)
@@ -139,7 +163,7 @@ void get_keyboard_input() {
     }
 }
 
-void game() {
+bool game() {
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
     // draw player for the first time
     old_player_pos_x = player_pos_x;
@@ -157,7 +181,7 @@ void game() {
     }
 
     for (;;) {
-        // ===================clear screen====================
+        // ===================Clear Screen====================
         // clear player
         draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET, 0);
        
@@ -165,9 +189,11 @@ void game() {
         for (int i = 0; i < 3; ++i) {
             draw_ranctangle(obstacles_old_pos[i][0], obstacles_old_pos[i][1], obstacle_old_width[i]/2 + current_speed, obstacle_old_height[i]/2 + current_speed, 0);
         }
-        // ================end if clear screen================
+        // ================End of Clear Screen================
 
-        // ================draw new elements==================
+
+
+        // ================Draw New Elements==================
         // draw new player
         draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
 
@@ -176,17 +202,16 @@ void game() {
             draw_ranctangle(obstacles_pos[i][0], obstacles_pos[i][1], obstacle_width[i]/2, obstacle_height[i]/2, 0xFFC0CB);
         }
         // Wait for vertical sync to swap buffers
-        // =============end of draw new elements==============
+        // =============End of Draw New Elements==============
 
         wait_for_vsync();
        
         // Update the pixel_buffer_start pointer to the new back buffer
         pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-       
 
 
 
-        // ==========Update the previous position===========
+        // ==========Update the Previous Position===========
         old_player_pos_x = player_pos_x;
         for (int i = 0; i < 3; ++i) {
             obstacles_old_pos[i][0] = obstacles_pos[i][0];
@@ -194,13 +219,22 @@ void game() {
             obstacle_old_height[i] = obstacle_height[i];
             obstacle_old_width[i] = obstacle_width[i];
         }
-        // ======end of Update the previous position=======
+        // ======End of Update the Previous Position=======
+
+
+
+        // ================Check Game Over=================
+        for (int i = 0; i < 3; ++i) {
+            if (collideObstacle(obstacles_pos[i], obstacle_height[i], obstacle_width[i])) {
+                return true;
+            }
+        }
+        // ============End of Check Game Over==============
 
 
 
 
-
-        // ===========update elements position=============
+        // ===========Update Elements Position=============
         // update player position
         get_button_input();
         switch (arrow_input)
@@ -224,6 +258,18 @@ void game() {
                 obstacles_pos[i][1] += current_speed;
             }
         }
-        // ========end ofupdate elements position==========
+        // ========End of Update Elements Position==========
     }
+    return false;
+}
+
+bool collideObstacle(int pos[2], int height, int width) {
+    return !(player_pos_x + PLYAER_X_OFFSET < pos[0] - width / 2|| 
+             player_pos_x - PLYAER_X_OFFSET > pos[0] + width / 2 ||
+             player_pos_y + PLAYER_Y_OFFSET < pos[1] - height / 2||
+             player_pos_y - PLAYER_Y_OFFSET > pos[1] + height / 2);
+}
+
+void showGameOver() {
+    printf("Game Over\n");
 }
