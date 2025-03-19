@@ -8,6 +8,7 @@
 
 ### Wilbert
 1. Implement the PS/2 Keyboard component but failed, implemented key component on DE1-SoC board instead.
+2. Modified the game logic part in the terminal
 
 ## What are we going to do next week
 
