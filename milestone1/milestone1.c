@@ -117,11 +117,13 @@ int main(void)
         switch (arrow_input)
         {
         case 1:
-            player_pos_x += PLAYER_SPEED;
+            if (player_pos_x <= SCREEN_WIDTH - 6)
+                player_pos_x += PLAYER_SPEED;
             arrow_input = 0;
             break;
         case 2:
-            player_pos_x -= PLAYER_SPEED;
+            if (player_pos_x >= 6)
+                player_pos_x -= PLAYER_SPEED;
             arrow_input = 0;
             break;
         }
