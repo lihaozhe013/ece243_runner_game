@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <time.h>
 #define HALF_WIDTH_BOX 2
+#define PLAYER_SPEED 5
 #define player_pos_y 220
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
@@ -27,11 +28,13 @@ void clear_screen();
 void wait_for_vsync();
 void resetObstacle(int pos[2], int *height, int *width, int idx);
 void resetObstacle2(int pos[2], int *height, int *width, int idx);
+void get_button_input();
 void get_keyboard_input();
 
 int main(void)
 {
-    srand(time(NULL));
+    arrow_input = 0;
+	srand(time(NULL));
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
     // declare other variables(not shown)
     // initialize location and direction of rectangles(not shown)
@@ -67,7 +70,7 @@ int main(void)
     for (;;) {
         // ===================clear screen====================
         // clear player
-        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + 1, PLAYER_Y_OFFSET + 1, 0);
+        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET, 0);
        
         // clear obstacles
         for (int i = 0; i < 3; ++i) {
@@ -110,18 +113,21 @@ int main(void)
 
         // ===========update elements position=============
         // update player position
-        get_keyboard_input();
+        get_button_input();
         switch (arrow_input)
         {
         case 1:
-            player_pos_x += 10;
+            player_pos_x += PLAYER_SPEED;
+            arrow_input = 0;
             break;
         case 2:
-            player_pos_x -= 10;
+            player_pos_x -= PLAYER_SPEED;
+            arrow_input = 0;
+            break;
         }
         // update obstacle postion
         for (int i = 0; i < 3; ++i) {
-            if (obstacles_pos[i][1] - obstacle_height[i] >= SCREEN_HEIGHT) {
+            if (obstacles_pos[i][1] - obstacle_height[i] - 1 >= SCREEN_HEIGHT) {
                 resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
             } else {
                 obstacles_pos[i][1] += current_speed;
@@ -174,13 +180,24 @@ void resetObstacle(int pos[2], int *height, int *width, int idx) {
     pos[1] = -(int)((100 + rand() % 41) * idx);
 }
 
+void get_button_input() {
+    volatile int* buttons_ptr = (int *)0xFF200050;
+    int button_data = *(buttons_ptr);
+    
+    if (button_data & 0b0001) { // key 0
+        arrow_input = 1;
+    } else if (button_data & 0b0010) { // key 1 pressed
+        arrow_input = 2;
+    }
+}
+
 void get_keyboard_input() {
     volatile int * keyboard_ptr = (int * )0xFF200100;
     int input[3] = {0};
     int inputIndex = 2;
    
     if (*(keyboard_ptr) & 0xF) {
-        for (int i = 0; i < *(keyboard_ptr) & 0xFFFF0000; i++) {
+        for (int i = 0; i < (*(keyboard_ptr) & 0xFFFF0000); i++) {
             input[inputIndex] = *(keyboard_ptr) & 0x7; // save the input
             inputIndex--;
             if (inputIndex == -1) { // reset index
