@@ -1,36 +1,3 @@
-# Game Description
-User controls a sprite in  person perspective using a PS/2 keyboard to dodge the obstacles. There will be multiple lanes with obstacles or power-ups (like a shield) spawning randomly. A point system will be displayed on the screen. The sprite will "run" faster as time goes on (so it will be harder to dodge obstacles) and when the user hits an obstacle it will be game over, an audio clip will be played, and the final score will be displayed.
-
-![Block Diagram](block-diagram.png)
-
-
-# Milestone 1
-
-## What did we do last week
-
-### Haozhe
-1. Draw 3 objects on the screen that can automatically move downward, and make sure that these objects disappear automatically and generate new objects when they are completely below the screen. 
-2. Simulate the game logic part in the terminal
-
-### Wilbert
-1. Implement the PS/2 Keyboard component but failed, implemented key component on DE1-SoC board instead.
-2. Modified the game logic part in the terminal
-
-## What are we going to do next week
-
-### Haozhe
-1. Implement all game logic parts to board
-2. Create a simple start screen and game over screen
-
-### Wilbert
-1. Finish the keyboard component
-2. Create a game over sound generator function
-3. 
-
-
-## Code
-Here's our code on the board
-```c
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
@@ -63,6 +30,7 @@ void resetObstacle(int pos[2], int *height, int *width, int idx);
 void resetObstacle2(int pos[2], int *height, int *width, int idx);
 void get_button_input();
 void get_keyboard_input();
+void game();
 
 int main(void)
 {
@@ -84,93 +52,9 @@ int main(void)
     *(pixel_ctrl_ptr + 1) = (int) &Buffer2;
     pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
     clear_screen(); // pixel_buffer_start points to the pixel buffer
-   
-    // draw player for the first time
-    old_player_pos_x = player_pos_x;
-    draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
-   
-    // draw the obstacles for the first time
-    for (int i = 0; i < 3; ++i) {
-        resetObstacle(obstacles_pos[i], &obstacle_width[i], &obstacle_height[i], i);
-        obstacles_pos[i][1] -= 150;
-        obstacles_old_pos[i][0] = obstacles_pos[i][0];
-        obstacles_old_pos[i][1] = obstacles_pos[i][1];
-        obstacle_old_height[i] = obstacle_height[i];
-        obstacle_old_width[i] = obstacle_width[i];
-        draw_ranctangle(obstacles_pos[i][0], obstacles_pos[i][1], obstacle_width[i]/2, obstacle_height[i]/2, 0xFFC0CB);
-    }
-   
-    for (;;) {
-        // ===================clear screen====================
-        // clear player
-        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET, 0);
-       
-        // clear obstacles
-        for (int i = 0; i < 3; ++i) {
-            draw_ranctangle(obstacles_old_pos[i][0], obstacles_old_pos[i][1], obstacle_old_width[i]/2 + current_speed, obstacle_old_height[i]/2 + current_speed, 0);
-        }
-        // ================end if clear screen================
 
-        // ================draw new elements==================
-        // draw new player
-        draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
-
-        // draw the new obstacles
-        for (int i = 0; i < 3; ++i) {
-            draw_ranctangle(obstacles_pos[i][0], obstacles_pos[i][1], obstacle_width[i]/2, obstacle_height[i]/2, 0xFFC0CB);
-        }
-        // Wait for vertical sync to swap buffers
-        // =============end of draw new elements==============
-
-        wait_for_vsync();
-       
-        // Update the pixel_buffer_start pointer to the new back buffer
-        pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-       
-
-
-
-        // ==========Update the previous position===========
-        old_player_pos_x = player_pos_x;
-        for (int i = 0; i < 3; ++i) {
-            obstacles_old_pos[i][0] = obstacles_pos[i][0];
-            obstacles_old_pos[i][1] = obstacles_pos[i][1];
-            obstacle_old_height[i] = obstacle_height[i];
-            obstacle_old_width[i] = obstacle_width[i];
-        }
-        // ======end of Update the previous position=======
-
-
-
-
-
-        // ===========update elements position=============
-        // update player position
-        get_button_input();
-        switch (arrow_input)
-        {
-        case 1:
-            if (player_pos_x <= SCREEN_WIDTH - 6)
-                player_pos_x += PLAYER_SPEED;
-            arrow_input = 0;
-            break;
-        case 2:
-            if (player_pos_x >= 6)
-                player_pos_x -= PLAYER_SPEED;
-            arrow_input = 0;
-            break;
-        }
-        // update obstacle postion
-        for (int i = 0; i < 3; ++i) {
-            if (obstacles_pos[i][1] - obstacle_height[i] - 1 >= SCREEN_HEIGHT) {
-                resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
-            } else {
-                obstacles_pos[i][1] += current_speed;
-            }
-        }
-        // ========end ofupdate elements position==========
-    }
-
+    // game start
+    game();
 }
 
 void plot_pixel(int x, int y, short int line_color)
@@ -254,4 +138,92 @@ void get_keyboard_input() {
         }
     }
 }
-```
+
+void game() {
+    volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
+    // draw player for the first time
+    old_player_pos_x = player_pos_x;
+    draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
+   
+    // draw the obstacles for the first time
+    for (int i = 0; i < 3; ++i) {
+        resetObstacle(obstacles_pos[i], &obstacle_width[i], &obstacle_height[i], i);
+        obstacles_pos[i][1] -= 150;
+        obstacles_old_pos[i][0] = obstacles_pos[i][0];
+        obstacles_old_pos[i][1] = obstacles_pos[i][1];
+        obstacle_old_height[i] = obstacle_height[i];
+        obstacle_old_width[i] = obstacle_width[i];
+        draw_ranctangle(obstacles_pos[i][0], obstacles_pos[i][1], obstacle_width[i]/2, obstacle_height[i]/2, 0xFFC0CB);
+    }
+
+    for (;;) {
+        // ===================clear screen====================
+        // clear player
+        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET, 0);
+       
+        // clear obstacles
+        for (int i = 0; i < 3; ++i) {
+            draw_ranctangle(obstacles_old_pos[i][0], obstacles_old_pos[i][1], obstacle_old_width[i]/2 + current_speed, obstacle_old_height[i]/2 + current_speed, 0);
+        }
+        // ================end if clear screen================
+
+        // ================draw new elements==================
+        // draw new player
+        draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
+
+        // draw the new obstacles
+        for (int i = 0; i < 3; ++i) {
+            draw_ranctangle(obstacles_pos[i][0], obstacles_pos[i][1], obstacle_width[i]/2, obstacle_height[i]/2, 0xFFC0CB);
+        }
+        // Wait for vertical sync to swap buffers
+        // =============end of draw new elements==============
+
+        wait_for_vsync();
+       
+        // Update the pixel_buffer_start pointer to the new back buffer
+        pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+       
+
+
+
+        // ==========Update the previous position===========
+        old_player_pos_x = player_pos_x;
+        for (int i = 0; i < 3; ++i) {
+            obstacles_old_pos[i][0] = obstacles_pos[i][0];
+            obstacles_old_pos[i][1] = obstacles_pos[i][1];
+            obstacle_old_height[i] = obstacle_height[i];
+            obstacle_old_width[i] = obstacle_width[i];
+        }
+        // ======end of Update the previous position=======
+
+
+
+
+
+        // ===========update elements position=============
+        // update player position
+        get_button_input();
+        switch (arrow_input)
+        {
+        case 1:
+            if (player_pos_x <= SCREEN_WIDTH - 6)
+                player_pos_x += PLAYER_SPEED;
+            arrow_input = 0;
+            break;
+        case 2:
+            if (player_pos_x >= 6)
+                player_pos_x -= PLAYER_SPEED;
+            arrow_input = 0;
+            break;
+        }
+        // update obstacle postion
+        for (int i = 0; i < 3; ++i) {
+            if (obstacles_pos[i][1] - obstacle_height[i] - 1 >= SCREEN_HEIGHT) {
+                resetObstacle(obstacles_pos[i], &obstacle_height[i], &obstacle_width[i], i);
+            } else {
+                obstacles_pos[i][1] += current_speed;
+            }
+        }
+        // ========end ofupdate elements position==========
+    }
+}
