@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Game Description</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="game-description">Game Description</h1>
+<p>User controls a sprite in  person perspective using a PS/2 keyboard to dodge the obstacles. There will be multiple lanes with obstacles or power-ups (like a shield) spawning randomly. A point system will be displayed on the screen. The sprite will &quot;run&quot; faster as time goes on (so it will be harder to dodge obstacles) and when the user hits an obstacle it will be game over, an audio clip will be played, and the final score will be displayed.</p>
+<p><img src="file:////home/wilbertbw/ece243_runner_game/milestone1/block-diagram.png" alt="Block Diagram"></p>
+<h1 id="milestone-1">Milestone 1</h1>
+<h2 id="what-did-we-do-last-week">What did we do last week</h2>
+<h3 id="haozhe">Haozhe</h3>
+<ol>
+<li>Draw 3 objects on the screen that can automatically move downward, and make sure that these objects disappear automatically and generate new objects when they are completely below the screen.</li>
+<li>Simulate the game logic part in the terminal</li>
+</ol>
+<h3 id="wilbert">Wilbert</h3>
+<ol>
+<li>Implement the PS/2 Keyboard component but failed, implemented key component on DE1-SoC board instead.</li>
+<li>Modified the game logic part in the terminal</li>
+</ol>
+<h2 id="what-are-we-going-to-do-next-week">What are we going to do next week</h2>
+<h3 id="haozhe-1">Haozhe</h3>
+<ol>
+<li>Implement all game logic parts to board</li>
+<li>Create a simple start screen and game over screen</li>
+</ol>
+<h3 id="wilbert-1">Wilbert</h3>
+<ol>
+<li>Finish the keyboard component</li>
+<li>Create a game over sound generator function</li>
+<li></li>
+</ol>
+<h2 id="code">Code</h2>
+<p>Here's our code on the board</p>
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdbool.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;time.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> HALF_WIDTH_BOX 2</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> PLAYER_SPEED 5</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> player_pos_y 220</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> SCREEN_HEIGHT 240</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> SCREEN_WIDTH 320</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> PLYAER_X_OFFSET 3</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> PLAYER_Y_OFFSET 5</span>
+
+<span class="hljs-type">int</span> pixel_buffer_start; <span class="hljs-comment">// global variable</span>
+<span class="hljs-type">short</span> <span class="hljs-type">int</span> Buffer1[<span class="hljs-number">240</span>][<span class="hljs-number">512</span>]; <span class="hljs-comment">// 240 rows, 512 (320 + padding) columns</span>
+<span class="hljs-type">short</span> <span class="hljs-type">int</span> Buffer2[<span class="hljs-number">240</span>][<span class="hljs-number">512</span>];
+
+
+<span class="hljs-type">int</span> player_pos_x = SCREEN_WIDTH / <span class="hljs-number">2</span>;
+<span class="hljs-type">int</span> old_player_pos_x;
+<span class="hljs-type">int</span> obstacles_pos[<span class="hljs-number">3</span>][<span class="hljs-number">2</span>], obstacle_height[<span class="hljs-number">3</span>], obstacle_width[<span class="hljs-number">3</span>];
+<span class="hljs-type">int</span> obstacles_old_pos[<span class="hljs-number">3</span>][<span class="hljs-number">2</span>], obstacle_old_height[<span class="hljs-number">3</span>], obstacle_old_width[<span class="hljs-number">3</span>];
+<span class="hljs-type">int</span> current_speed = <span class="hljs-number">5</span>;
+<span class="hljs-type">int</span> arrow_input = <span class="hljs-number">0</span>;
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">swap</span><span class="hljs-params">(<span class="hljs-type">int</span> *a, <span class="hljs-type">int</span> *b)</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">plot_pixel</span><span class="hljs-params">(<span class="hljs-type">int</span> x, <span class="hljs-type">int</span> y, <span class="hljs-type">short</span> <span class="hljs-type">int</span> line_color)</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">draw_ranctangle</span><span class="hljs-params">(<span class="hljs-type">int</span> x, <span class="hljs-type">int</span> y, <span class="hljs-type">int</span> half_witdh, <span class="hljs-type">int</span> half_height, <span class="hljs-type">short</span> <span class="hljs-type">int</span> line_color)</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">clear_screen</span><span class="hljs-params">()</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">wait_for_vsync</span><span class="hljs-params">()</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">resetObstacle</span><span class="hljs-params">(<span class="hljs-type">int</span> pos[<span class="hljs-number">2</span>], <span class="hljs-type">int</span> *height, <span class="hljs-type">int</span> *width, <span class="hljs-type">int</span> idx)</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">resetObstacle2</span><span class="hljs-params">(<span class="hljs-type">int</span> pos[<span class="hljs-number">2</span>], <span class="hljs-type">int</span> *height, <span class="hljs-type">int</span> *width, <span class="hljs-type">int</span> idx)</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">get_button_input</span><span class="hljs-params">()</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">get_keyboard_input</span><span class="hljs-params">()</span>;
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span>
+{
+    arrow_input = <span class="hljs-number">0</span>;
+	srand(time(<span class="hljs-literal">NULL</span>));
+    <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> * pixel_ctrl_ptr = (<span class="hljs-type">int</span> *)<span class="hljs-number">0xFF203020</span>;
+    <span class="hljs-comment">// declare other variables(not shown)</span>
+    <span class="hljs-comment">// initialize location and direction of rectangles(not shown)</span>
+
+    <span class="hljs-comment">/* set front pixel buffer to Buffer 1 */</span>
+    *(pixel_ctrl_ptr + <span class="hljs-number">1</span>) = (<span class="hljs-type">int</span>) &amp;Buffer1; <span class="hljs-comment">// first store the address in the  back buffer</span>
+    <span class="hljs-comment">/* now, swap the front/back buffers, to set the front buffer location */</span>
+    wait_for_vsync();
+    <span class="hljs-comment">/* initialize a pointer to the pixel buffer, used by drawing functions */</span>
+    pixel_buffer_start = *pixel_ctrl_ptr;
+    clear_screen(); <span class="hljs-comment">// pixel_buffer_start points to the pixel buffer</span>
+
+    <span class="hljs-comment">/* set back pixel buffer to Buffer 2 */</span>
+    *(pixel_ctrl_ptr + <span class="hljs-number">1</span>) = (<span class="hljs-type">int</span>) &amp;Buffer2;
+    pixel_buffer_start = *(pixel_ctrl_ptr + <span class="hljs-number">1</span>); <span class="hljs-comment">// we draw on the back buffer</span>
+    clear_screen(); <span class="hljs-comment">// pixel_buffer_start points to the pixel buffer</span>
+   
+    <span class="hljs-comment">// draw player for the first time</span>
+    old_player_pos_x = player_pos_x;
+    draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, <span class="hljs-number">0xFFFF</span>);
+   
+    <span class="hljs-comment">// draw the obstacles for the first time</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; ++i) {
+        resetObstacle(obstacles_pos[i], &amp;obstacle_width[i], &amp;obstacle_height[i], i);
+        obstacles_pos[i][<span class="hljs-number">1</span>] -= <span class="hljs-number">150</span>;
+        obstacles_old_pos[i][<span class="hljs-number">0</span>] = obstacles_pos[i][<span class="hljs-number">0</span>];
+        obstacles_old_pos[i][<span class="hljs-number">1</span>] = obstacles_pos[i][<span class="hljs-number">1</span>];
+        obstacle_old_height[i] = obstacle_height[i];
+        obstacle_old_width[i] = obstacle_width[i];
+        draw_ranctangle(obstacles_pos[i][<span class="hljs-number">0</span>], obstacles_pos[i][<span class="hljs-number">1</span>], obstacle_width[i]/<span class="hljs-number">2</span>, obstacle_height[i]/<span class="hljs-number">2</span>, <span class="hljs-number">0xFFC0CB</span>);
+    }
+   
+    <span class="hljs-keyword">for</span> (;;) {
+        <span class="hljs-comment">// ===================clear screen====================</span>
+        <span class="hljs-comment">// clear player</span>
+        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET, <span class="hljs-number">0</span>);
+       
+        <span class="hljs-comment">// clear obstacles</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; ++i) {
+            draw_ranctangle(obstacles_old_pos[i][<span class="hljs-number">0</span>], obstacles_old_pos[i][<span class="hljs-number">1</span>], obstacle_old_width[i]/<span class="hljs-number">2</span> + current_speed, obstacle_old_height[i]/<span class="hljs-number">2</span> + current_speed, <span class="hljs-number">0</span>);
+        }
+        <span class="hljs-comment">// ================end if clear screen================</span>
+
+        <span class="hljs-comment">// ================draw new elements==================</span>
+        <span class="hljs-comment">// draw new player</span>
+        draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, <span class="hljs-number">0xFFFF</span>);
+
+        <span class="hljs-comment">// draw the new obstacles</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; ++i) {
+            draw_ranctangle(obstacles_pos[i][<span class="hljs-number">0</span>], obstacles_pos[i][<span class="hljs-number">1</span>], obstacle_width[i]/<span class="hljs-number">2</span>, obstacle_height[i]/<span class="hljs-number">2</span>, <span class="hljs-number">0xFFC0CB</span>);
+        }
+        <span class="hljs-comment">// Wait for vertical sync to swap buffers</span>
+        <span class="hljs-comment">// =============end of draw new elements==============</span>
+
+        wait_for_vsync();
+       
+        <span class="hljs-comment">// Update the pixel_buffer_start pointer to the new back buffer</span>
+        pixel_buffer_start = *(pixel_ctrl_ptr + <span class="hljs-number">1</span>);
+       
+
+
+
+        <span class="hljs-comment">// ==========Update the previous position===========</span>
+        old_player_pos_x = player_pos_x;
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; ++i) {
+            obstacles_old_pos[i][<span class="hljs-number">0</span>] = obstacles_pos[i][<span class="hljs-number">0</span>];
+            obstacles_old_pos[i][<span class="hljs-number">1</span>] = obstacles_pos[i][<span class="hljs-number">1</span>];
+            obstacle_old_height[i] = obstacle_height[i];
+            obstacle_old_width[i] = obstacle_width[i];
+        }
+        <span class="hljs-comment">// ======end of Update the previous position=======</span>
+
+
+
+
+
+        <span class="hljs-comment">// ===========update elements position=============</span>
+        <span class="hljs-comment">// update player position</span>
+        get_button_input();
+        <span class="hljs-keyword">switch</span> (arrow_input)
+        {
+        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+            <span class="hljs-keyword">if</span> (player_pos_x &lt;= SCREEN_WIDTH - <span class="hljs-number">6</span>)
+                player_pos_x += PLAYER_SPEED;
+            arrow_input = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+            <span class="hljs-keyword">if</span> (player_pos_x &gt;= <span class="hljs-number">6</span>)
+                player_pos_x -= PLAYER_SPEED;
+            arrow_input = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">break</span>;
+        }
+        <span class="hljs-comment">// update obstacle postion</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; ++i) {
+            <span class="hljs-keyword">if</span> (obstacles_pos[i][<span class="hljs-number">1</span>] - obstacle_height[i] - <span class="hljs-number">1</span> &gt;= SCREEN_HEIGHT) {
+                resetObstacle(obstacles_pos[i], &amp;obstacle_height[i], &amp;obstacle_width[i], i);
+            } <span class="hljs-keyword">else</span> {
+                obstacles_pos[i][<span class="hljs-number">1</span>] += current_speed;
+            }
+        }
+        <span class="hljs-comment">// ========end ofupdate elements position==========</span>
+    }
+
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">plot_pixel</span><span class="hljs-params">(<span class="hljs-type">int</span> x, <span class="hljs-type">int</span> y, <span class="hljs-type">short</span> <span class="hljs-type">int</span> line_color)</span>
+{
+    <span class="hljs-keyword">volatile</span> <span class="hljs-type">short</span> <span class="hljs-type">int</span> *one_pixel_address;
+    one_pixel_address = pixel_buffer_start + (y &lt;&lt; <span class="hljs-number">10</span>) + (x &lt;&lt; <span class="hljs-number">1</span>);
+    *one_pixel_address = line_color;
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">swap</span><span class="hljs-params">(<span class="hljs-type">int</span> *a, <span class="hljs-type">int</span> *b)</span> {
+    <span class="hljs-type">int</span> temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">draw_ranctangle</span><span class="hljs-params">(<span class="hljs-type">int</span> x, <span class="hljs-type">int</span> y, <span class="hljs-type">int</span> half_witdh, <span class="hljs-type">int</span> half_height, <span class="hljs-type">short</span> <span class="hljs-type">int</span> line_color)</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = ((x - half_witdh &gt;= <span class="hljs-number">0</span>) ? (x - half_witdh) : <span class="hljs-number">0</span>); i &lt; ((x + half_witdh) &lt;= SCREEN_WIDTH ? (x + half_witdh) : SCREEN_WIDTH); ++i) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j = ((y - half_height) &gt;= <span class="hljs-number">0</span> ? (y - half_height) : <span class="hljs-number">0</span>); j &lt; ((y + half_height) &lt;= SCREEN_HEIGHT ? (y + half_height) : SCREEN_HEIGHT); ++j) {
+            plot_pixel(i, j, line_color);
+        }
+    }
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">wait_for_vsync</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> * pixel_ctrl_ptr = (<span class="hljs-type">int</span> *)<span class="hljs-number">0xFF203020</span>;
+    * pixel_ctrl_ptr = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span>(*(pixel_ctrl_ptr + <span class="hljs-number">3</span>) &amp; <span class="hljs-number">0b1</span>);
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">clear_screen</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; SCREEN_WIDTH; ++i) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j = <span class="hljs-number">0</span>; j &lt; SCREEN_HEIGHT; ++j) {
+            plot_pixel(i, j, <span class="hljs-number">0</span>);
+        }
+    }
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">resetObstacle</span><span class="hljs-params">(<span class="hljs-type">int</span> pos[<span class="hljs-number">2</span>], <span class="hljs-type">int</span> *height, <span class="hljs-type">int</span> *width, <span class="hljs-type">int</span> idx)</span> {
+    *height = rand() % <span class="hljs-number">80</span> + <span class="hljs-number">50</span>; <span class="hljs-comment">// Make sure it&#x27;s not zero</span>
+    *width = <span class="hljs-number">70</span> + rand() % <span class="hljs-number">20</span>;
+    pos[<span class="hljs-number">0</span>] = *width / <span class="hljs-number">2</span> + (idx * <span class="hljs-number">80</span>); <span class="hljs-comment">// 320 / 3 = 80</span>
+    pos[<span class="hljs-number">1</span>] = -(<span class="hljs-type">int</span>)((<span class="hljs-number">100</span> + rand() % <span class="hljs-number">41</span>) * idx);
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">get_button_input</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span>* buttons_ptr = (<span class="hljs-type">int</span> *)<span class="hljs-number">0xFF200050</span>;
+    <span class="hljs-type">int</span> button_data = *(buttons_ptr);
+    
+    <span class="hljs-keyword">if</span> (button_data &amp; <span class="hljs-number">0b0001</span>) { <span class="hljs-comment">// key 0</span>
+        arrow_input = <span class="hljs-number">1</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (button_data &amp; <span class="hljs-number">0b0010</span>) { <span class="hljs-comment">// key 1 pressed</span>
+        arrow_input = <span class="hljs-number">2</span>;
+    }
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">get_keyboard_input</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">volatile</span> <span class="hljs-type">int</span> * keyboard_ptr = (<span class="hljs-type">int</span> * )<span class="hljs-number">0xFF200100</span>;
+    <span class="hljs-type">int</span> input[<span class="hljs-number">3</span>] = {<span class="hljs-number">0</span>};
+    <span class="hljs-type">int</span> inputIndex = <span class="hljs-number">2</span>;
+   
+    <span class="hljs-keyword">if</span> (*(keyboard_ptr) &amp; <span class="hljs-number">0xF</span>) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; (*(keyboard_ptr) &amp; <span class="hljs-number">0xFFFF0000</span>); i++) {
+            input[inputIndex] = *(keyboard_ptr) &amp; <span class="hljs-number">0x7</span>; <span class="hljs-comment">// save the input</span>
+            inputIndex--;
+            <span class="hljs-keyword">if</span> (inputIndex == <span class="hljs-number">-1</span>) { <span class="hljs-comment">// reset index</span>
+                inputIndex = <span class="hljs-number">2</span>;
+            }
+            <span class="hljs-keyword">if</span> (input[<span class="hljs-number">0</span>] == <span class="hljs-number">0xE0</span> &amp;&amp; input[<span class="hljs-number">1</span>] == <span class="hljs-number">0xF0</span> &amp;&amp; input[<span class="hljs-number">2</span>] == <span class="hljs-number">0x6B</span>) { <span class="hljs-comment">// left arrow key release</span>
+                arrow_input = <span class="hljs-number">1</span>;
+                <span class="hljs-keyword">break</span>;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (input[<span class="hljs-number">0</span>] == <span class="hljs-number">0xE0</span> &amp;&amp; input[<span class="hljs-number">1</span>] == <span class="hljs-number">0xF0</span> &amp;&amp; input[<span class="hljs-number">2</span>] == <span class="hljs-number">0x74</span>) { <span class="hljs-comment">// right arrow key release</span>
+                arrow_input = <span class="hljs-number">2</span>;
+                <span class="hljs-keyword">break</span>;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (input[<span class="hljs-number">0</span>] == <span class="hljs-number">0xE0</span> &amp;&amp; input[<span class="hljs-number">1</span>] == <span class="hljs-number">0xF0</span> &amp;&amp; input[<span class="hljs-number">2</span>] == <span class="hljs-number">0x75</span>) { <span class="hljs-comment">// up arrow key release</span>
+                arrow_input = <span class="hljs-number">3</span>;
+                <span class="hljs-keyword">break</span>;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (input[<span class="hljs-number">0</span>] == <span class="hljs-number">0xE0</span> &amp;&amp; input[<span class="hljs-number">1</span>] == <span class="hljs-number">0xF0</span> &amp;&amp; input[<span class="hljs-number">2</span>] == <span class="hljs-number">0x72</span>) { <span class="hljs-comment">// down arrow key release</span>
+                arrow_input = <span class="hljs-number">4</span>;
+                <span class="hljs-keyword">break</span>;
+            }
+        }
+    }
+}
+</code></pre>
+
+            
+            
+        </body>
+        </html>
