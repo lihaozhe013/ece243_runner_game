@@ -13,6 +13,10 @@
 ## What are we going to do next week
 
 ### Haozhe
-
+1. Implement all game logic parts to board
+2. Create a simple start screen and game over screen
 
 ### Wilbert
+1. Finish the keyboard component
+2. Create a game over sound generator function
+3. 
