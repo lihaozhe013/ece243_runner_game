@@ -96,6 +96,29 @@ int main(void)
     pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
     clear_screen(); // pixel_buffer_start points to the pixel buffer
 
+    // =======Show Start Page========
+    plot_image_start_page(0, 0);
+    wait_for_vsync();
+    while (1) {
+        get_button_input();
+        if (arrow_input == 1) {
+            /* set front pixel buffer to Buffer 1 */
+            *(pixel_ctrl_ptr + 1) = (int) &Buffer1; // first store the address in the  back buffer
+            /* now, swap the front/back buffers, to set the front buffer location */
+            wait_for_vsync();
+            /* initialize a pointer to the pixel buffer, used by drawing functions */
+            pixel_buffer_start = *pixel_ctrl_ptr;
+            clear_screen(); // pixel_buffer_start points to the pixel buffer
+
+            /* set back pixel buffer to Buffer 2 */
+            *(pixel_ctrl_ptr + 1) = (int) &Buffer2;
+            pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
+            clear_screen(); // pixel_buffer_start points to the pixel buffer
+            break;
+        }
+    }
+    // ====End of Show Start Page====
+    
     // game start
     while (1) {
         if (game()) {
