@@ -254,7 +254,6 @@ bool game() {
 
     // draw the obstacles for the first time
     for (int i = 0; i < 5; ++i) {
-        printf("yesyes\n");
         obstacle_height[i] = -SCREEN_HEIGHT - (200 * i);
         int numObstacles = rand() % LANES;
         // int numObstacles = 2;
@@ -268,13 +267,11 @@ bool game() {
         }
     }
 
-    printf("Break Point 1\n");
-
     for (;;) {
         if (time_counter >= 550) {
-            current_speed += 10;
+            current_speed += 5;
             time_counter = 0;
-            printf("+10\n");
+            printf("+5\n");
         }
         ++time_counter;
         // ===================Clear Screen====================
