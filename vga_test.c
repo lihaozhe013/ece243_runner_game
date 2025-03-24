@@ -255,7 +255,7 @@ void get_keyboard_input_poll() {
     }
 }
 
-void get_keyboard_input() {
+void get_keyboard_input() { // this guy does not work (note: interrupts from the keyboard are currently disabled)
     volatile int * keyboard_ptr = (int * )0xFF200100;
     int keyboard_data = *(keyboard_ptr);
     int RAVAIL = keyboard_data & 0x8000;
@@ -283,11 +283,10 @@ void get_keyboard_input() {
     }
 }
 
-void handler(void) { // interrupt call does not work
+void handler(void) {
     int mcause_value;
     __asm__ volatile ("csrr %0, mcause" : "=r"(mcause_value));
     printf("interrupt call worked, before if statement\n");
-    // check for the interrupt causer here (check)
     if (mcause_value ==   0x80000016) { // check if keyboard intterupt
         printf("interrupt call worked\n");
         get_keyboard_input();
