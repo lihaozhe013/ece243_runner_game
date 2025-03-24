@@ -50,7 +50,7 @@ void erase_image_start_page(int x, int y) {
 #define HALF_OBSTACLE_3_WIDTH 53
 #define HALF_OBSTACLES_HEIGHT 40 
 
-#define PLAYER_SPEED 5
+#define PLAYER_SPEED 20
 #define player_pos_y 220
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
@@ -62,13 +62,13 @@ int pixel_buffer_start; // global variable
 short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
 short int Buffer2[240][512];
 
-int player_pos_x = SCREEN_WIDTH / 2;
+int player_pos_x;
 int old_player_pos_x;
 int obstacle_height[5];
 int obstacle_height_old[5];
 bool obstacle_pos[5][3] = {0};
 bool obstacle_pos_old[5][3] = {0};
-int current_speed = 5;
+int current_speed;
 int arrow_input = 0;
 
 void swap(int *a, int *b);
@@ -121,7 +121,6 @@ int main(void)
             *(pixel_ctrl_ptr + 1) = (int) &Buffer2;
             pixel_buffer_start = *(pixel_ctrl_ptr + 1); // we draw on the back buffer
             clear_screen(); // pixel_buffer_start points to the pixel buffer
-            wait_for_vsync();
             break;
         }
     }
@@ -229,16 +228,36 @@ void get_keyboard_input() {
 }
 
 bool game() {
+    printf("Game Start\n");
+    // reset
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            obstacle_pos[i][j] = false;
+            obstacle_pos_old[i][j] = false;
+        }
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        obstacle_height[i] = 0;
+        obstacle_height_old[i] = 0;
+    }
+    
+
     unsigned int time_counter = 0;
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
     // draw player for the first time
+    player_pos_x = SCREEN_WIDTH / 2;
     old_player_pos_x = player_pos_x;
+    current_speed = 5;
+
     draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
 
     // draw the obstacles for the first time
     for (int i = 0; i < 5; ++i) {
-        obstacle_height[i] = -SCREEN_HEIGHT - (120 * i);
+        printf("yesyes\n");
+        obstacle_height[i] = -SCREEN_HEIGHT - (200 * i);
         int numObstacles = rand() % LANES;
+        // int numObstacles = 2;
         int placed = 0;
         while (placed < numObstacles) {
             int lane = rand() % LANES;
@@ -248,6 +267,8 @@ bool game() {
             }
         }
     }
+
+    printf("Break Point 1\n");
 
     for (;;) {
         if (time_counter >= 550) {
@@ -259,7 +280,7 @@ bool game() {
         // ===================Clear Screen====================
         // clear old player
         draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET, 0);
-       
+        
         // clear old obstacles
         for (int i = 0; i < 5; ++i) {
             if (obstacle_pos_old[i][0] == true) {
@@ -354,7 +375,7 @@ bool game() {
         // update obstacle postion
         for (int i = 0; i < 5; ++i) {
             if (obstacle_height[i] - HALF_OBSTACLES_HEIGHT - 1 >= SCREEN_HEIGHT) {
-                obstacle_height[i] = obstacle_height[(i + 4) % 5] - 120;
+                obstacle_height[i] = obstacle_height[(i + 4) % 5] - 200;
                 // clear pos info
                 for (int j = 0; j < 3; ++j) {
                     obstacle_pos[i][j] = false;
