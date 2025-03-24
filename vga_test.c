@@ -266,10 +266,6 @@ void get_keyboard_input() { // this guy does not work (note: interrupts from the
         byte1 = byte2;
         byte2 = keyboard_data & 0xFF;
 
-        if ((byte2 == (char)0XE0)) {
-            printf("got the first input");
-        }
-
         if ((byte1 == (char)0xE0) && (byte2 == (char)0X6B)) { // left arrow key press
             arrow_input = 1;
         } else if ((byte1 == (char)0xE0) && (byte2 == (char)0x74)) { // right arrow key press

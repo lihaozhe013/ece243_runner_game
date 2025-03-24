@@ -51,7 +51,6 @@ void erase_image_start_page(int x, int y) {
 #define HALF_OBSTACLES_HEIGHT 40 
 
 #define PLAYER_SPEED 20
-#define player_pos_y 220
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
 #define PLYAER_X_OFFSET 3
@@ -63,13 +62,15 @@ short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
 short int Buffer2[240][512];
 
 int player_pos_x;
-int old_player_pos_x;
+int player_pos_y = 220;
+int old_player_pos_x, old_player_pos_y;
 int obstacle_height[5];
 int obstacle_height_old[5];
 bool obstacle_pos[5][3] = {0};
 bool obstacle_pos_old[5][3] = {0};
 int current_speed;
 int arrow_input = 0;
+char byte1 = 0, byte2 = 0;
 
 void swap(int *a, int *b);
 void plot_pixel(int x, int y, short int line_color);
@@ -198,6 +199,28 @@ void get_button_input() {
     }
 }
 
+void get_keyboard_input_poll() {
+    volatile int * keyboard_ptr = (int * )0xFF200100;
+    int keyboard_data = *(keyboard_ptr); // read the Data register in the PS/2 port
+    int RVALID = keyboard_data & 0x8000; // extract the RVALID field
+    
+    if (RVALID) {
+        /* shift the next data byte into the display */
+        byte1 = byte2;
+        byte2 = keyboard_data & 0xFF;
+    
+        if ((byte1 == (char)0xE0) && (byte2 == (char)0x74)) { // right arrow key press
+            arrow_input = 1;
+        } else if ((byte1 == (char)0xE0) && (byte2 == (char)0x6B)) { // left arrow key press
+            arrow_input = 2;
+        } else if ((byte1 == (char)0xE0) && (byte2 == (char)0x75)) { // up arrow key press
+            arrow_input = 3;
+        } else if ((byte1 == (char)0xE0) && (byte2 == (char)0x72)) { // down arrow key press
+            arrow_input = 4;
+        }
+    }
+}
+
 void get_keyboard_input() {
     volatile int * keyboard_ptr = (int * )0xFF200100;
     int input[3] = {0};
@@ -248,6 +271,7 @@ bool game() {
     // draw player for the first time
     player_pos_x = SCREEN_WIDTH / 2;
     old_player_pos_x = player_pos_x;
+    old_player_pos_y = player_pos_y;
     current_speed = 5;
 
     draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
@@ -276,7 +300,8 @@ bool game() {
         ++time_counter;
         // ===================Clear Screen====================
         // clear old player
-        draw_ranctangle(old_player_pos_x, player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET, 0);
+        get_keyboard_input_poll();
+        draw_ranctangle(old_player_pos_x, old_player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET + PLAYER_SPEED, 0);
         
         // clear old obstacles
         for (int i = 0; i < 5; ++i) {
@@ -291,10 +316,12 @@ bool game() {
             }
         }
         // ================End of Clear Screen================
+        get_keyboard_input_poll();
 
 
 
         // ================Draw New Elements==================
+        get_keyboard_input_poll();
         // draw new player
         draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
 
@@ -312,6 +339,7 @@ bool game() {
         }
         // Wait for vertical sync to swap buffers
         // =============End of Draw New Elements==============
+        get_keyboard_input_poll();
 
         wait_for_vsync();
        
@@ -321,7 +349,9 @@ bool game() {
 
 
         // ==========Update the Previous Position===========
+        get_keyboard_input_poll();
         old_player_pos_x = player_pos_x;
+        old_player_pos_y = player_pos_y;
         for (int i = 0; i < 5; ++i) {
             obstacle_height_old[i] = obstacle_height[i];
             for (int j = 0; j < 3; ++j) {
@@ -329,6 +359,7 @@ bool game() {
             }
         }
         // ======End of Update the Previous Position=======
+        get_keyboard_input_poll();
 
 
 
@@ -354,20 +385,29 @@ bool game() {
 
         // ===========Update Elements Position=============
         // update player position
-        get_button_input();
+        // get_button_input();
+        get_keyboard_input_poll();
         switch (arrow_input)
         {
         case 1:
-            if (player_pos_x <= SCREEN_WIDTH - 6)
-                player_pos_x += PLAYER_SPEED;
+            player_pos_x += PLAYER_SPEED;
             arrow_input = 0;
             break;
         case 2:
-            if (player_pos_x >= 6)
-                player_pos_x -= PLAYER_SPEED;
+            player_pos_x -= PLAYER_SPEED;
+            arrow_input = 0;
+            break;
+        case 3:
+            player_pos_y -= PLAYER_SPEED;
+            arrow_input = 0;
+            break;
+        case 4:
+            player_pos_y += PLAYER_SPEED;
             arrow_input = 0;
             break;
         }
+
+        get_keyboard_input_poll();
 
         // update obstacle postion
         for (int i = 0; i < 5; ++i) {
@@ -392,6 +432,8 @@ bool game() {
             }
         }
         // ========End of Update Elements Position==========
+
+        get_keyboard_input_poll();
     }
     return false;
 }
