@@ -8,7 +8,7 @@
 #define HALF_OBSTACLE_1_WIDTH 53
 #define HALF_OBSTACLE_2_WIDTH 54
 #define HALF_OBSTACLE_3_WIDTH 53
-#define HALF_OBSTACLES_HEIGHT 64
+#define HALF_OBSTACLES_HEIGHT 40 
 
 #define PLAYER_SPEED 5
 #define player_pos_y 220
@@ -170,7 +170,7 @@ bool game() {
 
     // draw the obstacles for the first time
     for (int i = 0; i < 5; ++i) {
-        obstacle_height[i] = SCREEN_HEIGHT + 48 * i;
+        obstacle_height[i] = -SCREEN_HEIGHT - (120 * i);
         int numObstacles = rand() % LANES;
         int placed = 0;
         while (placed < numObstacles) {
@@ -247,6 +247,14 @@ bool game() {
                 if (collideObstacle(OBSTACLE_1_X_POS, obstacle_height[i], HALF_OBSTACLE_1_WIDTH)) {
                     return true;
                 }
+            if (obstacle_pos[i][1] == true)
+                if (collideObstacle(OBSTACLE_2_X_POS, obstacle_height[i], HALF_OBSTACLE_2_WIDTH)) {
+                    return true;
+                }
+            if (obstacle_pos[i][0] == true)
+                if (collideObstacle(OBSTACLE_3_X_POS, obstacle_height[i], HALF_OBSTACLE_3_WIDTH)) {
+                    return true;
+                }
         }
         // ============End of Check Game Over==============
 
@@ -273,7 +281,7 @@ bool game() {
         // update obstacle postion
         for (int i = 0; i < 5; ++i) {
             if (obstacle_height[i] - HALF_OBSTACLES_HEIGHT - 1 >= SCREEN_HEIGHT) {
-                obstacle_height[i] = 0 - HALF_OBSTACLES_HEIGHT;
+                obstacle_height[i] = obstacle_height[(i + 4) % 5] - 120;
                 // clear pos info
                 for (int j = 0; j < 3; ++j) {
                     obstacle_pos[i][j] = false;
