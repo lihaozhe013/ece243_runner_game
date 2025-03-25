@@ -48,9 +48,9 @@ void erase_image_start_page(int x, int y) {
 #define HALF_OBSTACLE_1_WIDTH 53
 #define HALF_OBSTACLE_2_WIDTH 54
 #define HALF_OBSTACLE_3_WIDTH 53
-#define HALF_OBSTACLES_HEIGHT 40 
+#define HALF_OBSTACLES_HEIGHT 40
 
-#define PLAYER_SPEED 20
+#define PLAYER_SPEED 30
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
 #define PLYAER_X_OFFSET 3
@@ -264,15 +264,14 @@ bool game() {
         obstacle_height[i] = 0;
         obstacle_height_old[i] = 0;
     }
-    
-
-    unsigned int time_counter = 0;
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
     // draw player for the first time
     player_pos_x = SCREEN_WIDTH / 2;
+	player_pos_y = 220;
     old_player_pos_x = player_pos_x;
     old_player_pos_y = player_pos_y;
     current_speed = 5;
+	unsigned int time_counter = 0;
 
     draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
 
@@ -373,7 +372,7 @@ bool game() {
                 if (collideObstacle(OBSTACLE_2_X_POS, obstacle_height[i], HALF_OBSTACLE_2_WIDTH)) {
                     return true;
                 }
-            if (obstacle_pos[i][0] == true)
+            if (obstacle_pos[i][2] == true)
                 if (collideObstacle(OBSTACLE_3_X_POS, obstacle_height[i], HALF_OBSTACLE_3_WIDTH)) {
                     return true;
                 }
@@ -391,21 +390,30 @@ bool game() {
         {
         case 1:
             player_pos_x += PLAYER_SPEED;
+			if (player_pos_x >= SCREEN_WIDTH)
+				player_pos_x = SCREEN_WIDTH - 1;
             arrow_input = 0;
             break;
         case 2:
             player_pos_x -= PLAYER_SPEED;
+			if (player_pos_x <= 0)
+				player_pos_x = 1;
             arrow_input = 0;
             break;
         case 3:
             player_pos_y -= PLAYER_SPEED;
+			if (player_pos_y <= 0)
+				player_pos_y = 1;
             arrow_input = 0;
             break;
         case 4:
             player_pos_y += PLAYER_SPEED;
+			if (player_pos_y >= SCREEN_HEIGHT)
+				player_pos_y = SCREEN_HEIGHT - 1;
             arrow_input = 0;
             break;
         }
+		
 
         get_keyboard_input_poll();
 
