@@ -53,7 +53,7 @@ void erase_image_start_page(int x, int y) {
 #define PLAYER_SPEED 30
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
-#define PLYAER_X_OFFSET 3
+#define PLAYER_X_OFFSET 3
 #define PLAYER_Y_OFFSET 5
 #define LANES 3
 
@@ -273,7 +273,7 @@ bool game() {
     current_speed = 5;
 	unsigned int time_counter = 0;
 
-    draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
+    draw_ranctangle(player_pos_x, player_pos_y, PLAYER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
 
     // draw the obstacles for the first time
     for (int i = 0; i < 5; ++i) {
@@ -298,9 +298,7 @@ bool game() {
         }
         ++time_counter;
         // ===================Clear Screen====================
-        // clear old player
-        get_keyboard_input_poll();
-        draw_ranctangle(old_player_pos_x, old_player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET + PLAYER_SPEED, 0);
+        draw_ranctangle(old_player_pos_x, old_player_pos_y, PLAYER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET + PLAYER_SPEED, 0);
         
         // clear old obstacles
         for (int i = 0; i < 5; ++i) {
@@ -315,14 +313,12 @@ bool game() {
             }
         }
         // ================End of Clear Screen================
-        get_keyboard_input_poll();
 
 
 
         // ================Draw New Elements==================
-        get_keyboard_input_poll();
         // draw new player
-        draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
+        draw_ranctangle(player_pos_x, player_pos_y, PLAYER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
 
         // draw the new obstacles
         for (int i = 0; i < 5; ++i) {
@@ -338,7 +334,6 @@ bool game() {
         }
         // Wait for vertical sync to swap buffers
         // =============End of Draw New Elements==============
-        get_keyboard_input_poll();
 
         wait_for_vsync();
        
@@ -358,7 +353,6 @@ bool game() {
             }
         }
         // ======End of Update the Previous Position=======
-        get_keyboard_input_poll();
 
 
 
@@ -390,26 +384,26 @@ bool game() {
         {
         case 1:
             player_pos_x += PLAYER_SPEED;
-			if (player_pos_x >= SCREEN_WIDTH)
-				player_pos_x = SCREEN_WIDTH - 1;
+			if (player_pos_x >= SCREEN_WIDTH - PLAYER_X_OFFSET)
+				player_pos_x = SCREEN_WIDTH - PLAYER_X_OFFSET - 1;
             arrow_input = 0;
             break;
         case 2:
             player_pos_x -= PLAYER_SPEED;
-			if (player_pos_x <= 0)
-				player_pos_x = 1;
+			if (player_pos_x <= PLAYER_X_OFFSET)
+				player_pos_x = PLAYER_X_OFFSET + 1;
             arrow_input = 0;
             break;
         case 3:
             player_pos_y -= PLAYER_SPEED;
-			if (player_pos_y <= 0)
-				player_pos_y = 1;
+			if (player_pos_y <= PLAYER_Y_OFFSET)
+				player_pos_y = PLAYER_Y_OFFSET + 1;
             arrow_input = 0;
             break;
         case 4:
             player_pos_y += PLAYER_SPEED;
-			if (player_pos_y >= SCREEN_HEIGHT)
-				player_pos_y = SCREEN_HEIGHT - 1;
+			if (player_pos_y >= SCREEN_HEIGHT - PLAYER_Y_OFFSET)
+				player_pos_y = SCREEN_HEIGHT - PLAYER_Y_OFFSET - 1;
             arrow_input = 0;
             break;
         }
@@ -447,8 +441,8 @@ bool game() {
 }
 
 bool collideObstacle(int x, int y, int half_width) {
-    return !(player_pos_x + PLYAER_X_OFFSET < x - half_width || 
-             player_pos_x - PLYAER_X_OFFSET > x + half_width ||
+    return !(player_pos_x + PLAYER_X_OFFSET < x - half_width || 
+             player_pos_x - PLAYER_X_OFFSET > x + half_width ||
              player_pos_y + PLAYER_Y_OFFSET < y - HALF_OBSTACLES_HEIGHT||
              player_pos_y - PLAYER_Y_OFFSET > y + HALF_OBSTACLES_HEIGHT);
 }
