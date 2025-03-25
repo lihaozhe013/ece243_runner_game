@@ -298,8 +298,6 @@ bool game() {
         }
         ++time_counter;
         // ===================Clear Screen====================
-        // clear old player
-        get_keyboard_input_poll();
         draw_ranctangle(old_player_pos_x, old_player_pos_y, PLYAER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET + PLAYER_SPEED, 0);
         
         // clear old obstacles
@@ -315,12 +313,10 @@ bool game() {
             }
         }
         // ================End of Clear Screen================
-        get_keyboard_input_poll();
 
 
 
         // ================Draw New Elements==================
-        get_keyboard_input_poll();
         // draw new player
         draw_ranctangle(player_pos_x, player_pos_y, PLYAER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
 
@@ -338,7 +334,6 @@ bool game() {
         }
         // Wait for vertical sync to swap buffers
         // =============End of Draw New Elements==============
-        get_keyboard_input_poll();
 
         wait_for_vsync();
        
@@ -358,7 +353,6 @@ bool game() {
             }
         }
         // ======End of Update the Previous Position=======
-        get_keyboard_input_poll();
 
 
 
