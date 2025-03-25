@@ -1,0 +1,9 @@
+Haozhe:
+1. change player and obstacles to pictures
+2. try better random logic for different type of obstacles
+3. try to make the player and obstacle dynamic like having animation, so player's leg switch between two pictures
+
+Wilbert:
+1. Try keyboard interrupt
+2. Try generate a square wave or saw2 wave when game over
+
