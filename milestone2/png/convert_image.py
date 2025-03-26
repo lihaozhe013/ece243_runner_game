@@ -69,8 +69,8 @@ void erase_image_{img_name}(int x, int y) {{
 
 if __name__ == '__main__':
     convert_img(
-        file_name=r'game_over_page.png',
-        img_name='game_over_page',
-        width=320,
-        height=240
+        file_name=r'poop_106_80.png',
+        img_name='poop_106_80',
+        width=106,
+        height=80
     )
