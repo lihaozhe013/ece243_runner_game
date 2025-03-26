@@ -346,7 +346,7 @@ bool game() {
     }
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
     // draw player for the first time
-    player_pos_x = SCREEN_WIDTH / 2;
+    player_pos_x = 130;
 	player_pos_y = 200;
     old_player_pos_x = player_pos_x;
     old_player_pos_y = player_pos_y;
