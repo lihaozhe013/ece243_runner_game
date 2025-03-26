@@ -119,6 +119,10 @@ void erase_image_start_page(int x, int y) {
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <stdint.h>
+
+#define HEX3_HEX0 ((volatile uint32_t *) 0xFF200020)
+#define HEX5_HEX4 ((volatile uint32_t *) 0xFF200030)
 
 #define OBSTACLE_1_X_POS 53 // 106 / 2 = 53
 #define OBSTACLE_2_X_POS 160// 106 + 108 / 2 = 106 + 54 = 160
@@ -134,6 +138,25 @@ void erase_image_start_page(int x, int y) {
 #define PLAYER_X_OFFSET 10
 #define PLAYER_Y_OFFSET 12 // should be 12.5 but make it easier for player
 #define LANES 3
+
+const int hex_codes[16] = {
+    0b00111111, // 0
+    0b00000110, // 1
+    0b01011011, // 2
+    0b01001111, // 3
+    0b01100110, // 4
+    0b01101101, // 5
+    0b01111101, // 6
+    0b00000111, // 7
+    0b01111111, // 8
+    0b01100111, // 9
+    0b01110111, // A
+    0b01111100, // b
+    0b00111001, // C
+    0b01011110, // d
+    0b01111001, // E
+    0b01110001  // F
+};
 
 int pixel_buffer_start; // global variable
 short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
@@ -160,6 +183,8 @@ void get_keyboard_input();
 bool game(); // if return true, means game over, if return false, it means game ended accidentally
 bool collideObstacle(int x, int y, int half_width);
 void showGameOver();
+void display_hex_digit(int display_num, int value, int blank);
+void display_number_on_hex(int number);
 
 int main(void)
 {
@@ -351,6 +376,8 @@ bool game() {
     old_player_pos_x = player_pos_x;
     old_player_pos_y = player_pos_y;
     current_speed = 5;
+    int mark = 0;
+    display_number_on_hex(mark);
 	unsigned int time_counter = 0;
 
     // draw_ranctangle(player_pos_x, player_pos_y, PLAYER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
@@ -376,9 +403,11 @@ bool game() {
     int player_animation_frame_counter = 0;
 
     for (;;) {
-        if (time_counter >= 550) {
-            current_speed += 5;
+        if (time_counter >= 110) {
+            current_speed += 1;
             time_counter = 0;
+            ++mark;
+            display_number_on_hex(mark);
             printf("+5\n");
         }
         ++time_counter;
@@ -552,4 +581,30 @@ void showGameOver() {
     printf("Game Over\n");
     plot_image_game_over_page(0, 0);
     wait_for_vsync();
+}
+
+// Display one digit on a specified HEX display (0-5)
+void display_hex_digit(int display_num, int value, int blank) {
+    uint32_t bit_pattern = blank ? 0x00 : hex_codes[value & 0x0F];
+    uint32_t shift = (display_num % 4) * 8;
+
+    volatile uint32_t *hex_ptr = (display_num < 4) ? HEX3_HEX0 : HEX5_HEX4;
+
+    uint32_t current = *hex_ptr;
+    current &= ~(0xFF << shift); // clear target digit bits
+    current |= ((bit_pattern & 0xFF) << shift);  // set new digit
+    *hex_ptr = current;
+}
+
+// Display a 3-digit number (000–999) on HEX0–HEX2
+void display_number_on_hex(int number) {
+    if (number < 0 || number > 999) return;
+
+    int hundreds = number / 100;
+    int tens = (number / 10) % 10;
+    int ones = number % 10;
+
+    display_hex_digit(2, hundreds, hundreds == 0); // optional blanking for leading zero
+    display_hex_digit(1, tens, (hundreds == 0 && tens == 0)); // optional blanking
+    display_hex_digit(0, ones, 0);
 }
