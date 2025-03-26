@@ -373,8 +373,7 @@ bool game() {
     // draw player for the first time
     player_pos_x = 130;
 	player_pos_y = 200;
-    old_player_pos_x = player_pos_x;
-    old_player_pos_y = player_pos_y;
+    
     current_speed = 5;
     int mark = 0;
     display_number_on_hex(mark);
@@ -382,6 +381,8 @@ bool game() {
 
     // draw_ranctangle(player_pos_x, player_pos_y, PLAYER_X_OFFSET, PLAYER_Y_OFFSET, 0xFFFF);
     plot_image_player_image_2(player_pos_x - PLAYER_X_OFFSET, player_pos_y - PLAYER_Y_OFFSET);
+    old_player_pos_x = player_pos_x;
+    old_player_pos_y = player_pos_y;
 
     // draw the obstacles for the first time
     for (int i = 0; i < 5; ++i) {
@@ -397,11 +398,13 @@ bool game() {
             }
         }
     }
-    
+    wait_for_vsync();
+    pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+
     // define player animation parameters
     bool current_is_player_image_1 = true;
     int player_animation_frame_counter = 0;
-
+    
     for (;;) {
         if (time_counter >= 110) {
             current_speed += 1;
@@ -473,7 +476,6 @@ bool game() {
 
 
         // ==========Update the Previous Position===========
-        get_keyboard_input_poll();
         old_player_pos_x = player_pos_x;
         old_player_pos_y = player_pos_y;
         for (int i = 0; i < 5; ++i) {
@@ -508,7 +510,6 @@ bool game() {
 
         // ===========Update Elements Position=============
         // update player position
-        // get_button_input();
         get_keyboard_input_poll();
         switch (arrow_input)
         {
@@ -537,9 +538,6 @@ bool game() {
             arrow_input = 0;
             break;
         }
-		
-
-        get_keyboard_input_poll();
 
         // update obstacle postion
         for (int i = 0; i < 5; ++i) {
@@ -564,8 +562,6 @@ bool game() {
             }
         }
         // ========End of Update Elements Position==========
-
-        get_keyboard_input_poll();
     }
     return false;
 }
