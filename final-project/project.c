@@ -346,13 +346,14 @@ bool game() {
         for (int i = 0; i < 5; ++i) {
             if (obstacle_pos[i][0] == true) {
                 // draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height[i], HALF_OBSTACLE_1_WIDTH, HALF_OBSTACLES_HEIGHT, 0xFFC0CB);
-                plot_image_poop_106_80(0, obstacle_height[i] + HALF_OBSTACLES_HEIGHT);
+                plot_image_poop_106_80(0, obstacle_height[i] - HALF_OBSTACLES_HEIGHT);
             }
             if (obstacle_pos[i][1] == true) {
                 draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height[i], HALF_OBSTACLE_2_WIDTH, HALF_OBSTACLES_HEIGHT, 0xFFC0CB);
             }
             if (obstacle_pos[i][2] == true) {
                 draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height[i], HALF_OBSTACLE_3_WIDTH, HALF_OBSTACLES_HEIGHT, 0xFFC0CB);
+                plot_image_poop_106_80(OBSTACLE_3_X_POS - HALF_OBSTACLE_3_WIDTH, obstacle_height[i] - HALF_OBSTACLES_HEIGHT);
             }
         }
         // Wait for vertical sync to swap buffers
