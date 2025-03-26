@@ -69,8 +69,8 @@ void erase_image_{img_name}(int x, int y) {{
 
 if __name__ == '__main__':
     convert_img(
-        file_name=r'Player_gif_2.png',
-        img_name='player_image_2',
-        width=20,
-        height=25
+        file_name=r'background-original-size.png',
+        img_name='background',
+        width=320,
+        height=240
     )
