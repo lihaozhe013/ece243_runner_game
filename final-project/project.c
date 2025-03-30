@@ -109,6 +109,19 @@ const int hex_codes[16] = {
     0b01110001  // F
 };
 
+const short unsigned int scores_display[10][20] = {
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF}
+};
+
 struct audio_t {
 	volatile unsigned int control; // The control/status register
 	volatile unsigned char rarc; // the 8 bit RARC register
@@ -133,6 +146,7 @@ bool obstacle_pos_old[5][3] = {0};
 int current_speed;
 int arrow_input = 0;
 char byte1 = 0, byte2 = 0;
+int mark;
 
 void swap(int *a, int *b);
 void plot_pixel(int x, int y, short int line_color);
@@ -147,6 +161,8 @@ bool collideObstacle(int x, int y, int half_width);
 void showGameOver();
 void display_hex_digit(int display_num, int value, int blank);
 void display_number_on_hex(int number);
+void draw_score(int mark);
+void draw_score_digit(int position, int score);
 
 int main(void)
 {
@@ -197,6 +213,7 @@ int main(void)
         if (game()) {
             showGameOver();
             play_game_over_audio();
+            draw_score(mark);
             while (1) {
                 get_button_input();
                 if (arrow_input == 1) {
@@ -300,6 +317,51 @@ void play_game_over_audio() {
     }
 }
 
+void draw_score(int mark) {
+    if (mark < 0 || mark > 999) return;
+
+    int hundreds = mark / 100;
+    int tens = (mark / 10) % 10;
+    int ones = mark % 10;
+
+    draw_score_digit(2, hundreds);
+    draw_score_digit(1, tens);
+    draw_score_digit(0, ones);
+}
+
+void draw_score_digit(int position, int score) {
+    int idx = 0;
+
+    if (position == 0) { // ones digit
+        for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
+            for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
+                if (rowIdx > 9 && rowIdx < 15 && colIdx > 304 && colIdx < 309 && idx < 40) {
+                    plot_pixel(colIdx, rowIdx, scores_display[score][idx]);
+                    idx++;
+                }
+            }
+        }
+    } else if (position == 1) { // tens digit
+        for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
+            for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
+                if (rowIdx > 9 && rowIdx < 15 && colIdx > 296 && colIdx < 301 && idx < 40) {
+                    plot_pixel(colIdx, rowIdx, scores_display[score][idx]);
+                    idx++;
+                }
+            }
+        }
+    } else { // hundreds digit
+        for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
+            for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
+                if (rowIdx > 9 && rowIdx < 15 && colIdx > 288 && colIdx < 293 && idx < 40) {
+                    plot_pixel(colIdx, rowIdx, scores_display[score][idx]);
+                    idx++;
+                }
+            }
+        }
+    }
+}
+
 bool game() {
     printf("Game Start\n");
     // reset
@@ -320,7 +382,7 @@ bool game() {
 	player_pos_y = 200;
     
     current_speed = 5;
-    int mark = 0;
+    mark = 0;
     display_number_on_hex(mark);
 	unsigned int time_counter = 0;
 
@@ -359,6 +421,7 @@ bool game() {
             printf("+5\n");
         }
         ++time_counter;
+        draw_score(mark);
         // ===================Clear Screen====================
         draw_ranctangle(old_player_pos_x, old_player_pos_y, PLAYER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET + PLAYER_SPEED, 0);
         
