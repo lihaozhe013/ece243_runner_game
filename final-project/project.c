@@ -147,6 +147,8 @@ int current_speed;
 int arrow_input = 0;
 char byte1 = 0, byte2 = 0;
 int mark;
+bool keyboard_start = false;
+bool keyboard_reset = false;
 
 void swap(int *a, int *b);
 void plot_pixel(int x, int y, short int line_color);
@@ -189,8 +191,11 @@ int main(void)
     plot_image_start_page(0, 0);
     wait_for_vsync();
     while (1) {
-        get_button_input();
-        if (arrow_input == 1) {
+        get_keyboard_input_poll();        
+        if (keyboard_start) {
+            keyboard_reset = false;
+            keyboard_start = false;
+
             /* set front pixel buffer to Buffer 1 */
             *(pixel_ctrl_ptr + 1) = (int) &Buffer1; // first store the address in the  back buffer
             /* now, swap the front/back buffers, to set the front buffer location */
@@ -215,8 +220,11 @@ int main(void)
             play_game_over_audio();
             draw_score(mark);
             while (1) {
-                get_button_input();
-                if (arrow_input == 1) {
+                get_keyboard_input_poll();
+                if (keyboard_reset) {
+                    keyboard_reset = false;
+                    keyboard_start = false;
+
                     /* set front pixel buffer to Buffer 1 */
                     *(pixel_ctrl_ptr + 1) = (int) &Buffer1; // first store the address in the  back buffer
                     /* now, swap the front/back buffers, to set the front buffer location */
@@ -302,6 +310,9 @@ void get_keyboard_input_poll() {
             arrow_input = 3;
         } else if ((byte1 == (char)0xE0) && (byte2 == (char)0x72)) { // down arrow key press
             arrow_input = 4;
+        } else if ((byte1 == (char)0xF0) && (byte2 == (char)0x29)) { // space bar release
+            keyboard_reset = true;
+            keyboard_start = true;
         }
     }
 }
