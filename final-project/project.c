@@ -551,8 +551,6 @@ bool game() {
 		display_number_on_hex(player_HP);
 		if (player_HP < 1)
 			return true;
-        draw_score(mark);
-        draw_hp(player_HP);
         // ===================Clear Screen====================
         draw_ranctangle(old_player_pos_x, old_player_pos_y, PLAYER_X_OFFSET + PLAYER_SPEED, PLAYER_Y_OFFSET + PLAYER_SPEED, 0);
         
@@ -623,10 +621,12 @@ bool game() {
         }
         // Wait for vertical sync to swap buffers
         // =============End of Draw New Elements==============
+        
+        draw_score(mark);
+        draw_hp(player_HP);
 
         wait_for_vsync();
         pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-
 
 
         // ==========Update the Previous Position===========
