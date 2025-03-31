@@ -392,28 +392,7 @@ void draw_score_digit(int position, int score) {
         }
     }
 }
-/*
-void draw_soap_spawn(int x, int y) { // this is for when the soap has not been "picked up" by player
-    
-    // make the logic to randomly draw the soap (don't forget to update the soap_x_pos, soap_y_pos, old_soap_x_pos, and old_soap_y_pos)
-    
-    // only 1 soap at a time, spawns in a certain time interval (1 every once in a while, duration undecided)
 
-    for (int i = 0; i < 5; ++i) {
-
-    }
-
-    plot_image_soap(int x, int y);
-}
-
-
-void draw_soap_activate() {
-    player_pos_x
-    player_pos_y
-
-    plot_image_soap(int x, int y)
-}
-*/
 void check_soap_collision() {
     if (!(player_pos_x + PLAYER_X_OFFSET < soap_x_pos - (SOAP_IMG_WIDTH / 2) || 
     player_pos_x - PLAYER_X_OFFSET > soap_x_pos + (SOAP_IMG_WIDTH / 2) ||
@@ -430,6 +409,8 @@ bool game() {
         for (int j = 0; j < 3; ++j) {
             obstacle_pos[i][j] = false;
             obstacle_pos_old[i][j] = false;
+			soap_pos[i][j] = false;
+			soap_pos_old[i][j] = false;
         }
     }
 
@@ -439,7 +420,7 @@ bool game() {
     }
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
     // draw player for the first time
-    player_pos_x = 130;
+    player_pos_x = SCREEN_WIDTH / 2;
 	player_pos_y = 200;
     
     current_speed = 5;
@@ -456,7 +437,6 @@ bool game() {
     for (int i = 0; i < 5; ++i) {
         obstacle_height[i] = -SCREEN_HEIGHT - (200 * i);
         int numObstacles = rand() % LANES;
-        // int numObstacles = 2;
         int placed = 0;
         while (placed < numObstacles) {
             int lane = rand() % LANES;
@@ -465,11 +445,15 @@ bool game() {
                 ++placed;
             }
             else {
-                soap_pos[i][lane] = rand() % 10 == 0;
+                soap_pos[i][lane] = 0;
             }
         }
+		for (int j = 0; j < 3; ++j) {
+			if (obstacle_pos[i][j] == false)
+				soap_pos[i][j] = (rand() % 5 == 0);
+		}
     }
-
+	
     wait_for_vsync();
     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 
@@ -503,13 +487,13 @@ bool game() {
             }
 
             if (soap_pos_old[i][0] == true) {
-                draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + current_speed, SOAP_IMG_HEIGHT / 2 + current_speed, 0);
+                draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH + 1 + current_speed, SOAP_IMG_HEIGHT / 2 + 1 + current_speed, 0);
             }
             if (soap_pos_old[i][1] == true) {
-                draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + current_speed, SOAP_IMG_HEIGHT / 2 + current_speed, 0);
+                draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH + 1 + current_speed, SOAP_IMG_HEIGHT / 2 + 1 + current_speed, 0);
             }
             if (soap_pos_old[i][2] == true) {
-                draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + current_speed, SOAP_IMG_HEIGHT / 2 + current_speed, 0);
+                draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH + 1 + current_speed, SOAP_IMG_HEIGHT / 2 + 1 + current_speed, 0);
             }
         }
         // ================End of Clear Screen================
@@ -575,6 +559,7 @@ bool game() {
             obstacle_height_old[i] = obstacle_height[i];
             for (int j = 0; j < 3; ++j) {
                 obstacle_pos_old[i][j] = obstacle_pos[i][j];
+				soap_pos_old[i][j] = soap_pos[i][j];
             }
         }
         // ======End of Update the Previous Position=======
@@ -649,7 +634,11 @@ bool game() {
                         ++placed;
                     }
                 }
-            }
+				for (int j = 0; j < 3; ++j) {
+					if (obstacle_pos[i][j] == false)
+						soap_pos[i][j] = (rand() % 5 == 0);
+				}
+			}
             else {
                 obstacle_height[i] += current_speed;
             }
