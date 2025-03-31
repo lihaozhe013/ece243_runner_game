@@ -572,6 +572,7 @@ bool game() {
                     --player_HP;
 					obstacle_pos[i][0] = false;
 					draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height_old[i], HALF_OBSTACLE_1_WIDTH + current_speed + 10, HALF_OBSTACLES_HEIGHT + current_speed + 10, 0);
+                    clear_screen();
                     wait_for_vsync();
                     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
                 }
@@ -582,6 +583,7 @@ bool game() {
                     --player_HP;
 					obstacle_pos[i][1] = false;
 					draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height_old[i], HALF_OBSTACLE_2_WIDTH + current_speed + 10, HALF_OBSTACLES_HEIGHT + current_speed + 10, 0);
+                    clear_screen();
                     wait_for_vsync();
                     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
                 }
@@ -592,6 +594,7 @@ bool game() {
                     --player_HP;
 					obstacle_pos[i][2] = false;
 					draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height_old[i], HALF_OBSTACLE_3_WIDTH + current_speed + 10, HALF_OBSTACLES_HEIGHT + current_speed + 10, 0);
+                    clear_screen();
                     wait_for_vsync();
                     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
                 }
@@ -604,6 +607,7 @@ bool game() {
                     ++player_HP;
 					soap_pos[i][0] = false;
 					draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
+                    clear_screen();
                     wait_for_vsync();
                     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 				}
@@ -615,6 +619,7 @@ bool game() {
 					soap_pos[i][1] = false;
                     // soap_pos_old[i][1] = false;
 					draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
+                    clear_screen();
                     wait_for_vsync();
                     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 				}
