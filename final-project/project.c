@@ -624,6 +624,7 @@ bool game() {
                 // clear pos info
                 for (int j = 0; j < 3; ++j) {
                     obstacle_pos[i][j] = false;
+					soap_pos[i][j] = false;
                 }
                 int numObstacles = rand() % LANES;
                 int placed = 0;
