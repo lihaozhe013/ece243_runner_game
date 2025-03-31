@@ -94,6 +94,9 @@ int game_over_audio_samples_num = 11136;
 #define HALF_OBSTACLE_3_WIDTH 53
 #define HALF_OBSTACLES_HEIGHT 40
 
+#define SOAP_IMG_WIDTH 33
+#define SOAP_IMG_HEIGHT 33
+
 #define PLAYER_SPEED 30
 #define SCREEN_HEIGHT 240
 #define SCREEN_WIDTH 320
@@ -143,7 +146,7 @@ struct audio_t {
 	volatile unsigned int rdata;
 };
 
-int pixel_buffer_start; // global variable
+int pixel_buffer_start;
 short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
 short int Buffer2[240][512];
 
@@ -154,12 +157,16 @@ int obstacle_height[5];
 int obstacle_height_old[5];
 bool obstacle_pos[5][3] = {0};
 bool obstacle_pos_old[5][3] = {0};
+bool soap_pos[5][3];
+bool soap_pos_old[5][3];
 int current_speed;
 int arrow_input = 0;
 char byte1 = 0, byte2 = 0;
 int mark;
 bool keyboard_start = false;
 bool keyboard_reset = false;
+bool soap_active = false;
+int soap_x_pos, soap_y_pos, old_soap_x_pos, old_soap_y_pos;
 
 void swap(int *a, int *b);
 void plot_pixel(int x, int y, short int line_color);
@@ -176,6 +183,8 @@ void display_hex_digit(int display_num, int value, int blank);
 void display_number_on_hex(int number);
 void draw_score(int mark);
 void draw_score_digit(int position, int score);
+void draw_soap_spawn();
+void draw_soap_activate();
 
 int main(void)
 {
@@ -383,6 +392,36 @@ void draw_score_digit(int position, int score) {
         }
     }
 }
+/*
+void draw_soap_spawn(int x, int y) { // this is for when the soap has not been "picked up" by player
+    
+    // make the logic to randomly draw the soap (don't forget to update the soap_x_pos, soap_y_pos, old_soap_x_pos, and old_soap_y_pos)
+    
+    // only 1 soap at a time, spawns in a certain time interval (1 every once in a while, duration undecided)
+
+    for (int i = 0; i < 5; ++i) {
+
+    }
+
+    plot_image_soap(int x, int y);
+}
+
+
+void draw_soap_activate() {
+    player_pos_x
+    player_pos_y
+
+    plot_image_soap(int x, int y)
+}
+*/
+void check_soap_collision() {
+    if (!(player_pos_x + PLAYER_X_OFFSET < soap_x_pos - (SOAP_IMG_WIDTH / 2) || 
+    player_pos_x - PLAYER_X_OFFSET > soap_x_pos + (SOAP_IMG_WIDTH / 2) ||
+    player_pos_y + PLAYER_Y_OFFSET < soap_y_pos - (SOAP_IMG_HEIGHT / 2) ||
+    player_pos_y - PLAYER_Y_OFFSET > soap_y_pos + (SOAP_IMG_HEIGHT / 2))) { // collide with soap happened
+        soap_active = true;
+    }
+}
 
 bool game() {
     printf("Game Start\n");
@@ -425,8 +464,12 @@ bool game() {
                 obstacle_pos[i][lane] = 1;
                 ++placed;
             }
+            else {
+                soap_pos[i][lane] = rand() % 10 == 0;
+            }
         }
     }
+
     wait_for_vsync();
     pixel_buffer_start = *(pixel_ctrl_ptr + 1);
 
@@ -458,6 +501,16 @@ bool game() {
             if (obstacle_pos_old[i][2] == true) {
                 draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height_old[i], HALF_OBSTACLE_3_WIDTH + current_speed, HALF_OBSTACLES_HEIGHT + current_speed, 0);
             }
+
+            if (soap_pos_old[i][0] == true) {
+                draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + current_speed, SOAP_IMG_HEIGHT / 2 + current_speed, 0);
+            }
+            if (soap_pos_old[i][1] == true) {
+                draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + current_speed, SOAP_IMG_HEIGHT / 2 + current_speed, 0);
+            }
+            if (soap_pos_old[i][2] == true) {
+                draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + current_speed, SOAP_IMG_HEIGHT / 2 + current_speed, 0);
+            }
         }
         // ================End of Clear Screen================
 
@@ -485,16 +538,24 @@ bool game() {
         // draw the new obstacles
         for (int i = 0; i < 5; ++i) {
             if (obstacle_pos[i][0] == true) {
-                // draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height[i], HALF_OBSTACLE_1_WIDTH, HALF_OBSTACLES_HEIGHT, 0xFFC0CB);
                 plot_image_poop_106_80(0, obstacle_height[i] - HALF_OBSTACLES_HEIGHT);
             }
             if (obstacle_pos[i][1] == true) {
-                // draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height[i], HALF_OBSTACLE_2_WIDTH, HALF_OBSTACLES_HEIGHT, 0xFFC0CB);
                 plot_image_poop_108_80(OBSTACLE_2_X_POS - HALF_OBSTACLE_2_WIDTH, obstacle_height[i] - HALF_OBSTACLES_HEIGHT);
             }
             if (obstacle_pos[i][2] == true) {
-                // draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height[i], HALF_OBSTACLE_3_WIDTH, HALF_OBSTACLES_HEIGHT, 0xFFC0CB);
                 plot_image_poop_106_80(OBSTACLE_3_X_POS - HALF_OBSTACLE_3_WIDTH, obstacle_height[i] - HALF_OBSTACLES_HEIGHT);
+            }
+
+            if (soap_pos[i][0] == true) {
+                // draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height[i], HALF_OBSTACLE_1_WIDTH, HALF_OBSTACLES_HEIGHT, 0xFFC0CB);
+                plot_image_soap(OBSTACLE_1_X_POS - SOAP_IMG_WIDTH, obstacle_height[i] - SOAP_IMG_HEIGHT / 2);
+            }
+            if (soap_pos[i][1] == true) {
+                plot_image_soap(OBSTACLE_2_X_POS - SOAP_IMG_WIDTH, obstacle_height[i] - SOAP_IMG_HEIGHT / 2);
+            }
+            if (soap_pos[i][2] == true) {
+                plot_image_soap(OBSTACLE_3_X_POS - SOAP_IMG_WIDTH, obstacle_height[i] - SOAP_IMG_HEIGHT / 2);
             }
         }
         // Wait for vertical sync to swap buffers
@@ -599,10 +660,20 @@ bool game() {
 }
 
 bool collideObstacle(int x, int y, int half_width) {
-    return !(player_pos_x + PLAYER_X_OFFSET < x - half_width || 
-             player_pos_x - PLAYER_X_OFFSET > x + half_width ||
-             player_pos_y + PLAYER_Y_OFFSET < y - HALF_OBSTACLES_HEIGHT||
-             player_pos_y - PLAYER_Y_OFFSET > y + HALF_OBSTACLES_HEIGHT);
+    if (!(player_pos_x + PLAYER_X_OFFSET < x - half_width || 
+        player_pos_x - PLAYER_X_OFFSET > x + half_width ||
+        player_pos_y + PLAYER_Y_OFFSET < y - HALF_OBSTACLES_HEIGHT||
+        player_pos_y - PLAYER_Y_OFFSET > y + HALF_OBSTACLES_HEIGHT)) {
+        
+        if (soap_active) {
+            soap_active = false;
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
 }
 
 void showGameOver() {
