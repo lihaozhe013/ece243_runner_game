@@ -69,8 +69,8 @@ void erase_image_{img_name}(int x, int y) {{
 
 if __name__ == '__main__':
     convert_img(
-        file_name=r'background-original-size.png',
-        img_name='background',
-        width=320,
-        height=240
+        file_name=r'soap_img.png',
+        img_name='soap',
+        width=32,
+        height=32
     )
