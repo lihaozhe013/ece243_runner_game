@@ -142,6 +142,14 @@ const short unsigned int scores_display[10][20] = {
     {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF}
 };
 
+const short unsigned int score_text_display[5][20] = {
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0xFFFF, 0x0, 0x0, 0xFFFF, 0xFFFF, 0x0, 0x0, 0xFFFF},
+    {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0, 0x0, 0x0, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF}
+};
+
 struct audio_t {
 	volatile unsigned int control; // The control/status register
 	volatile unsigned char rarc; // the 8 bit RARC register
@@ -190,6 +198,7 @@ bool collideObstacle(int x, int y, int half_width, int half_height);
 void showGameOver();
 void display_hex_digit(int display_num, int value, int blank);
 void display_number_on_hex(int number);
+void draw_score_text();
 void draw_score(int mark);
 void draw_score_digit(int position, int score);
 void draw_hp(int hp);
@@ -250,6 +259,7 @@ int main(void)
             showGameOver();
             play_game_over_audio();
             draw_score(mark);
+            draw_score_text();
             while (1) {
                 get_keyboard_input_poll();
                 if (keyboard_reset) {
@@ -399,7 +409,7 @@ void draw_hp_digit(int position, int hp) { // need to move to the top left inste
     if (position == 0) { // ones digit
         for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
             for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
-                if (rowIdx > 9 && rowIdx < 15 && colIdx > 25 && colIdx < 30 && idx < 40) {
+                if (rowIdx > 9 && rowIdx < 15 && colIdx > 25 && colIdx < 30 && idx < 20) {
                     plot_pixel(colIdx, rowIdx, scores_display[hp][idx]);
                     idx++;
                 }
@@ -408,7 +418,7 @@ void draw_hp_digit(int position, int hp) { // need to move to the top left inste
     } else if (position == 1) { // tens digit
         for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
             for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
-                if (rowIdx > 9 && rowIdx < 15 && colIdx > 17 && colIdx < 22 && idx < 40) {
+                if (rowIdx > 9 && rowIdx < 15 && colIdx > 17 && colIdx < 22 && idx < 20) {
                     plot_pixel(colIdx, rowIdx, scores_display[hp][idx]);
                     idx++;
                 }
@@ -417,10 +427,39 @@ void draw_hp_digit(int position, int hp) { // need to move to the top left inste
     } else { // hundreds digit
         for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
             for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
-                if (rowIdx > 9 && rowIdx < 15 && colIdx > 9 && colIdx < 14 && idx < 40) {
+                if (rowIdx > 9 && rowIdx < 15 && colIdx > 9 && colIdx < 14 && idx < 20) {
                     plot_pixel(colIdx, rowIdx, scores_display[hp][idx]);
                     idx++;
                 }
+            }
+        }
+    }
+}
+
+void draw_score_text() {
+    int idx1 = 0, idx2 = 0, idx3 = 0, idx4 = 0, idx5 = 0;
+
+    for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
+        for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
+            if (rowIdx > 9 && rowIdx < 15 && colIdx > 304 && colIdx < 309 && idx1 < 20) {
+                plot_pixel(colIdx, rowIdx, score_text_display[4][idx1]);
+                idx1++;
+            }
+            if (rowIdx > 9 && rowIdx < 15 && colIdx > 296 && colIdx < 301 && idx2 < 20) {
+                plot_pixel(colIdx, rowIdx, score_text_display[3][idx2]);
+                idx2++;
+            }
+            if (rowIdx > 9 && rowIdx < 15 && colIdx > 288 && colIdx < 293 && idx3 < 20) {
+                plot_pixel(colIdx, rowIdx, score_text_display[2][idx3]);
+                idx3++;
+            }
+            if (rowIdx > 9 && rowIdx < 15 && colIdx > 280 && colIdx < 285 && idx4 < 20) {
+                plot_pixel(colIdx, rowIdx, score_text_display[1][idx4]);
+                idx4++;
+            }
+            if (rowIdx > 9 && rowIdx < 15 && colIdx > 272 && colIdx < 277 && idx5 < 20) {
+                plot_pixel(colIdx, rowIdx, score_text_display[0][idx5]);
+                idx5++;
             }
         }
     }
@@ -444,7 +483,7 @@ void draw_score_digit(int position, int score) {
     if (position == 0) { // ones digit
         for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
             for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
-                if (rowIdx > 9 && rowIdx < 15 && colIdx > 304 && colIdx < 309 && idx < 40) {
+                if (rowIdx > 17 && rowIdx < 23 && colIdx > 304 && colIdx < 309 && idx < 20) {
                     plot_pixel(colIdx, rowIdx, scores_display[score][idx]);
                     idx++;
                 }
@@ -453,7 +492,7 @@ void draw_score_digit(int position, int score) {
     } else if (position == 1) { // tens digit
         for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
             for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
-                if (rowIdx > 9 && rowIdx < 15 && colIdx > 296 && colIdx < 301 && idx < 40) {
+                if (rowIdx > 17 && rowIdx < 23 && colIdx > 296 && colIdx < 301 && idx < 20) {
                     plot_pixel(colIdx, rowIdx, scores_display[score][idx]);
                     idx++;
                 }
@@ -462,7 +501,7 @@ void draw_score_digit(int position, int score) {
     } else { // hundreds digit
         for (int rowIdx = 0; rowIdx < SCREEN_HEIGHT; rowIdx++) {
             for (int colIdx = 0; colIdx < SCREEN_WIDTH; colIdx++) {
-                if (rowIdx > 9 && rowIdx < 15 && colIdx > 288 && colIdx < 293 && idx < 40) {
+                if (rowIdx > 17 && rowIdx < 23 && colIdx > 288 && colIdx < 293 && idx < 20) {
                     plot_pixel(colIdx, rowIdx, scores_display[score][idx]);
                     idx++;
                 }
@@ -623,6 +662,7 @@ bool game() {
         // =============End of Draw New Elements==============
         
         draw_score(mark);
+        draw_score_text();
         draw_hp(player_HP);
 
         wait_for_vsync();
