@@ -160,7 +160,7 @@ struct audio_t {
 	volatile unsigned int rdata;
 };
 
-int pixel_buffer_start;
+volatile int pixel_buffer_start;
 short int Buffer1[240][512]; // 240 rows, 512 (320 + padding) columns
 short int Buffer2[240][512];
 
