@@ -151,13 +151,13 @@ const short unsigned int score_text_display[5][20] = {
 };
 
 struct audio_t {
-	volatile unsigned int control; // The control/status register
-	volatile unsigned char rarc; // the 8 bit RARC register
-	volatile unsigned char ralc; // the 8 bit RALC register
-	volatile unsigned char wsrc; // the 8 bit WSRC register
-	volatile unsigned char wslc; // the 8 bit WSLC register
-	volatile unsigned int ldata;
-	volatile unsigned int rdata;
+    volatile unsigned int control;
+    volatile unsigned char rarc;
+    volatile unsigned char ralc;
+    volatile unsigned char wsrc;
+    volatile unsigned char wslc;
+    volatile unsigned int ldata;
+    volatile unsigned int rdata;
 };
 
 volatile int pixel_buffer_start;
@@ -182,6 +182,7 @@ bool keyboard_reset = false;
 bool soap_active = false;
 int soap_x_pos, soap_y_pos, old_soap_x_pos, old_soap_y_pos;
 int player_HP = 3;
+struct audio_t *const audiop = ((struct audio_t *) 0xff203040);
 
 void swap(int *a, int *b);
 void plot_pixel(int x, int y, short int line_color);
@@ -359,10 +360,11 @@ void get_keyboard_input_poll() {
 }
 
 void play_game_over_audio() {
-    struct audio_t *const audiop = ((struct audio_t *) 0xff203040);
+    audiop->control = 0x8;
+    audiop->control = 0x0;
 
     for (int i = 0; i < game_over_audio_samples_num; i++) {
-        while (audiop->wsrc < 0);
+        while (audiop->wsrc == 0);
 
         audiop->ldata = game_over_audio[i];
         audiop->rdata = game_over_audio[i];
@@ -370,10 +372,11 @@ void play_game_over_audio() {
 }
 
 void play_collide_obstacle_audio() {
-    struct audio_t *const audiop = ((struct audio_t *) 0xff203040);
+    audiop->control = 0x8;
+    audiop->control = 0x0;
 
     for (int i = 0; i < collide_obstacle_audio_samples_num; i++) {
-        while (audiop->wsrc < 0);
+        while (audiop->wsrc == 0);
 
         audiop->ldata = collide_obstacle_audio[i];
         audiop->rdata = collide_obstacle_audio[i];
@@ -381,10 +384,11 @@ void play_collide_obstacle_audio() {
 }
 
 void play_collide_soap_audio() {
-    struct audio_t *const audiop = ((struct audio_t *) 0xff203040);
+    audiop->control = 0x8;
+    audiop->control = 0x0;
 
-    for (int i = 0; i < collide_obstacle_audio_samples_num; i++) {
-        while (audiop->wsrc < 0);
+    for (int i = 0; i < collide_soap_audio_samples_num; i++) {
+        while (audiop->wsrc == 0);
 
         audiop->ldata = collide_soap_audio[i];
         audiop->rdata = collide_soap_audio[i];
