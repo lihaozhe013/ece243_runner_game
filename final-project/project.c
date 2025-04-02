@@ -524,7 +524,6 @@ void check_soap_collision() {
 }
 
 bool game() {
-    printf("Game Start\n");
     // reset
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 3; ++j) {
@@ -726,44 +725,44 @@ bool game() {
 			}
         }
 		
-		for (int i = 0; i < 5; ++i) {
-			if (soap_pos[i][0] == true) {
-				if (collideObstacle(OBSTACLE_1_X_POS, obstacle_height[i], SOAP_IMG_WIDTH / 2, SOAP_IMG_HEIGHT / 2)) {
-                    ++player_HP;
-                    play_collide_soap_audio();
-					soap_pos[i][0] = false;
-					draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
-                    clear_screen();
-                    wait_for_vsync();
-                    pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-				}
-			}
+		// for (int i = 0; i < 5; ++i) {
+		// 	if (soap_pos[i][0] == true) {
+		// 		if (collideObstacle(OBSTACLE_1_X_POS, obstacle_height[i], SOAP_IMG_WIDTH / 2, SOAP_IMG_HEIGHT / 2)) {
+        //             ++player_HP;
+        //             play_collide_soap_audio();
+		// 			soap_pos[i][0] = false;
+		// 			draw_ranctangle(OBSTACLE_1_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
+        //             clear_screen();
+        //             wait_for_vsync();
+        //             pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+		// 		}
+		// 	}
 			
-            if (soap_pos[i][1] == true) {
-				if (collideObstacle(OBSTACLE_2_X_POS, obstacle_height[i], SOAP_IMG_WIDTH / 2, SOAP_IMG_HEIGHT / 2)) {
-                    ++player_HP;
-                    play_collide_soap_audio();
-					soap_pos[i][1] = false;
-                    // soap_pos_old[i][1] = false;
-					draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
-                    clear_screen();
-                    wait_for_vsync();
-                    pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-				}
-			}
+        //     if (soap_pos[i][1] == true) {
+		// 		if (collideObstacle(OBSTACLE_2_X_POS, obstacle_height[i], SOAP_IMG_WIDTH / 2, SOAP_IMG_HEIGHT / 2)) {
+        //             ++player_HP;
+        //             play_collide_soap_audio();
+		// 			soap_pos[i][1] = false;
+        //             // soap_pos_old[i][1] = false;
+		// 			draw_ranctangle(OBSTACLE_2_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
+        //             clear_screen();
+        //             wait_for_vsync();
+        //             pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+		// 		}
+		// 	}
 			
-            if (soap_pos[i][2] == true) {
-				if (collideObstacle(OBSTACLE_3_X_POS, obstacle_height[i], SOAP_IMG_WIDTH / 2, SOAP_IMG_HEIGHT / 2)) {
-                    ++player_HP;
-                    play_collide_soap_audio();
-					soap_pos[i][2] = false;
-					draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
-                    clear_screen();
-                    wait_for_vsync();
-                    pixel_buffer_start = *(pixel_ctrl_ptr + 1);
-				}
-			}
-		}
+        //     if (soap_pos[i][2] == true) {
+		// 		if (collideObstacle(OBSTACLE_3_X_POS, obstacle_height[i], SOAP_IMG_WIDTH / 2, SOAP_IMG_HEIGHT / 2)) {
+        //             ++player_HP;
+        //             play_collide_soap_audio();
+		// 			soap_pos[i][2] = false;
+		// 			draw_ranctangle(OBSTACLE_3_X_POS, obstacle_height_old[i], SOAP_IMG_WIDTH / 2 + 10 + current_speed, SOAP_IMG_HEIGHT / 2 + 10 + current_speed, 0);
+        //             clear_screen();
+        //             wait_for_vsync();
+        //             pixel_buffer_start = *(pixel_ctrl_ptr + 1);
+		// 		}
+		// 	}
+		// }
         // ============End of Check Game Over==============
 
 
@@ -836,14 +835,12 @@ bool collideObstacle(int x, int y, int half_width, int half_height) {
         player_pos_x - PLAYER_X_OFFSET > x + half_width ||
         player_pos_y + PLAYER_Y_OFFSET < y - half_height||
         player_pos_y - PLAYER_Y_OFFSET > y + half_height)) {
-		printf("collide\n");
 		return true;
 	}
 	return false;
 }
 
 void showGameOver() {
-    printf("Game Over\n");
     plot_image_game_over_page(0, 0);
     wait_for_vsync();
 }
