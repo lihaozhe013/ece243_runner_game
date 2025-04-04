@@ -6,3 +6,15 @@ User controls a sprite in  person perspective using a PS/2 keyboard to dodge the
 
 
 
+### Attribute Table
+
+| Task                                                         | Mainly Assigned to  | Modification     |
+| ------------------------------------------------------------ | ------------------- | ---------------- |
+| Main Game Logic including<br />1. Generation of obstacles at random position & obstacles movement<br />2. Player movement<br />3. Collision<br />4. Score system | Haozhe              | Haozhe           |
+| VGA things including<br />1. Visualization of **background**<br />2. Visualization of **player character** (including animation) and **obstacles**<br />3. Clear elements without clearing the whole screen<br />4. **Start Page** and **Game Over Page** display | Haozhe              | Haozhe           |
+| HP system + soap system<br />(Note: soap system was removed in final project due to unfixable bug) | Haozhe & Wilbert    | Haozhe & Wilbert |
+| Visualization of **Score** and **HP**                        | Wilbert             | Wilbert          |
+| Sound effect including<br />1. Colliding obstacles<br />2. Game Over sound<br />3. Colliding soap sound (Removed in the final project) | Wilbert             | Wilbert & Haozhe |
+| PS/2 Keyboard (Polling)                                      | Wilbert             | Wilbert          |
+| Debugging and Bug fixing                                     | Together in the lab | Together         |
+
